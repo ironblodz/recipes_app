@@ -38,27 +38,6 @@ const preparationSubSteps = [
   "Outros",
 ];
 
-interface Recipe {
-  title: string;
-  description: string;
-  ingredients: Array<{
-    name: string;
-    quantity: string;
-  }>;
-  instructions: Array<{
-    step: string;
-    subStep: string;
-  }>;
-  imageUrl?: string;
-  userId: string;
-  occasion: string;
-  memories?: Array<{
-    text: string;
-    imageUrl?: string;
-  }>;
-  createdAt: any;
-}
-
 export default function NewRecipe() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
