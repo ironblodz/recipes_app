@@ -1,9 +1,25 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 import { BookOpenIcon, HeartIcon } from "@heroicons/react/24/outline";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
+
+const compliments = [
+  "A mais linda ❤️",
+  "Minha princesa 👑",
+  "Meu amor 💕",
+  "Minha vida 🌟",
+  "Minha estrela ⭐",
+  "Minha rainha 👸",
+  "Minha joia 💎",
+  "Minha luz ✨",
+];
 
 const floatingAnimation = {
   initial: { y: 0 },
@@ -41,9 +57,44 @@ const heartAnimation = {
   },
 };
 
+const complimentAnimation = {
+  initial: { opacity: 0, y: 20, scale: 0.8 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+    scale: 0.8,
+    transition: {
+      duration: 0.5,
+      ease: "easeIn",
+    },
+  },
+};
+
+const floatingComplimentAnimation = {
+  initial: { y: 0 },
+  animate: {
+    y: [0, -10, 0],
+    transition: {
+      duration: 2,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+};
+
 export default function Home() {
   const { currentUser } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [currentCompliment, setCurrentCompliment] = useState(0);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -52,8 +103,15 @@ export default function Home() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentCompliment((prev) => (prev + 1) % compliments.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div ref={containerRef} className="min-h-screen overflow-hidden">
+    <div ref={containerRef} className="h-screen overflow-hidden">
       <Toaster position="top-right" />
 
       {/* Hero Section with Parallax */}
@@ -77,7 +135,7 @@ export default function Home() {
       </motion.div>
 
       {/* Content */}
-      <div className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="relative h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -105,6 +163,25 @@ export default function Home() {
               >
                 <HeartIcon className="h-8 w-8 text-pink-500" />
               </motion.div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentCompliment}
+                  variants={complimentAnimation}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  className="absolute -top-20 left-1/2 transform -translate-x-1/2 z-10"
+                >
+                  <motion.div
+                    variants={floatingComplimentAnimation}
+                    initial="initial"
+                    animate="animate"
+                    className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-3 rounded-full text-lg font-bold shadow-xl whitespace-nowrap backdrop-blur-sm"
+                  >
+                    {compliments[currentCompliment]}
+                  </motion.div>
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
 
             <motion.h1

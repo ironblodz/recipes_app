@@ -1,11 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   HomeIcon,
   BookOpenIcon,
@@ -15,46 +10,7 @@ import {
   SparklesIcon,
   HeartIcon,
 } from "@heroicons/react/24/outline";
-import { useState, useRef } from "react";
-
-const floatingAnimation = {
-  initial: { y: 0, scale: 1 },
-  animate: {
-    y: [0, -15, 0],
-    scale: [1, 1.1, 1],
-    transition: {
-      duration: 3,
-      repeat: Infinity,
-      ease: "easeInOut",
-    },
-  },
-};
-
-const floatingAnimation2 = {
-  initial: { y: 0, scale: 1 },
-  animate: {
-    y: [0, 15, 0],
-    scale: [1, 1.1, 1],
-    transition: {
-      duration: 3,
-      repeat: Infinity,
-      ease: "easeInOut",
-    },
-  },
-};
-
-const heartAnimation = {
-  initial: { scale: 1, rotate: 0 },
-  animate: {
-    scale: [1, 1.2, 1],
-    rotate: [0, 10, -10, 0],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: "easeInOut",
-    },
-  },
-};
+import { useState } from "react";
 
 const container = {
   hidden: { opacity: 0 },
@@ -71,18 +27,15 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
+const hoverAnimation = {
+  scale: 1.05,
+  transition: { type: "spring", stiffness: 400, damping: 10 },
+};
+
 export default function Navbar() {
   const { currentUser, logout } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const opacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.8]);
-  const scale = useTransform(scrollYProgress, [0, 0.1], [1, 0.95]);
 
   const handleLogout = async () => {
     try {
@@ -94,36 +47,49 @@ export default function Navbar() {
 
   return (
     <motion.nav
-      ref={containerRef}
-      style={{ opacity, scale }}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ type: "spring", stiffness: 100 }}
       className="fixed top-0 left-0 right-0 z-50"
     >
       <div className="relative">
-        {/* Background with gradient and blur */}
+        {/* Glassmorphism background */}
         <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md"
+          className="absolute inset-0 bg-white/80 backdrop-blur-lg shadow-lg"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         />
 
-        {/* Floating elements */}
+        {/* Decorative gradient elements */}
         <motion.div
-          variants={floatingAnimation}
-          initial="initial"
-          animate="animate"
-          className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-pink-200 to-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70"
+          className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-full filter blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.5, 0.8, 0.5],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         />
         <motion.div
-          variants={floatingAnimation2}
-          initial="initial"
-          animate="animate"
-          className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-gradient-to-r from-indigo-200 to-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70"
+          className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tr from-blue-500/20 to-indigo-500/20 rounded-full filter blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.8, 0.5, 0.8],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo and Brand */}
           <motion.div
             variants={item}
@@ -131,18 +97,29 @@ export default function Navbar() {
             animate="show"
             className="flex items-center space-x-3"
           >
-            <Link to="/" className="relative group flex items-center space-x-2">
+            <Link to="/" className="relative group">
               <motion.div
-                variants={heartAnimation}
-                initial="initial"
-                animate="animate"
-                className="absolute -top-3 -left-3 w-10 h-10 bg-white rounded-full p-2 shadow-lg"
+                whileHover={hoverAnimation}
+                className="flex items-center space-x-2"
               >
-                <HeartIcon className="h-6 w-6 text-pink-500" />
+                <motion.div
+                  animate={{
+                    rotate: [0, 10, -10, 0],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center"
+                >
+                  <HeartIcon className="h-6 w-6 text-white" />
+                </motion.div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                  Receitas da Joana
+                </span>
               </motion.div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-                Receitas da Joana
-              </span>
             </Link>
           </motion.div>
 
@@ -162,18 +139,19 @@ export default function Navbar() {
                     : "text-gray-600 hover:text-pink-500"
                 }`}
               >
-                <span className="flex items-center space-x-2 relative z-10">
+                <motion.span
+                  whileHover={hoverAnimation}
+                  className="flex items-center space-x-2 relative z-10"
+                >
                   <HomeIcon className="h-5 w-5" />
-                  <span className="text-base">Home</span>
-                </span>
-                {location.pathname === "/" ? (
+                  <span className="text-base font-medium">Home</span>
+                </motion.span>
+                {location.pathname === "/" && (
                   <motion.div
                     layoutId="activeNavItem"
                     className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl shadow-lg"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
-                ) : (
-                  <span className="absolute inset-0 w-full h-full rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                 )}
               </Link>
             </motion.div>
@@ -187,18 +165,19 @@ export default function Navbar() {
                     : "text-gray-600 hover:text-pink-500"
                 }`}
               >
-                <span className="flex items-center space-x-2 relative z-10">
+                <motion.span
+                  whileHover={hoverAnimation}
+                  className="flex items-center space-x-2 relative z-10"
+                >
                   <BookOpenIcon className="h-5 w-5" />
-                  <span className="text-base">Receitas</span>
-                </span>
-                {location.pathname === "/recipes" ? (
+                  <span className="text-base font-medium">Receitas</span>
+                </motion.span>
+                {location.pathname === "/recipes" && (
                   <motion.div
                     layoutId="activeNavItem"
                     className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl shadow-lg"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
-                ) : (
-                  <span className="absolute inset-0 w-full h-full rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                 )}
               </Link>
             </motion.div>
@@ -214,11 +193,14 @@ export default function Navbar() {
                         : "text-gray-600 hover:text-pink-500"
                     }`}
                   >
-                    <span className="flex items-center space-x-2 relative z-10">
+                    <motion.span
+                      whileHover={hoverAnimation}
+                      className="flex items-center space-x-2 relative z-10"
+                    >
                       <UserIcon className="h-5 w-5" />
-                      <span className="text-base">Perfil</span>
-                    </span>
-                    {location.pathname === "/profile" ? (
+                      <span className="text-base font-medium">Perfil</span>
+                    </motion.span>
+                    {location.pathname === "/profile" && (
                       <motion.div
                         layoutId="activeNavItem"
                         className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl shadow-lg"
@@ -228,23 +210,21 @@ export default function Navbar() {
                           duration: 0.6,
                         }}
                       />
-                    ) : (
-                      <span className="absolute inset-0 w-full h-full rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                     )}
                   </Link>
                 </motion.div>
 
                 <motion.div variants={item}>
-                  <button
+                  <motion.button
+                    whileHover={hoverAnimation}
                     onClick={handleLogout}
                     className="relative group px-4 py-2 rounded-xl text-gray-600 hover:text-pink-500 transition-all duration-300"
                   >
                     <span className="flex items-center space-x-2 relative z-10">
                       <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                      <span className="text-base">Sair</span>
+                      <span className="text-base font-medium">Sair</span>
                     </span>
-                    <span className="absolute inset-0 w-full h-full rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-                  </button>
+                  </motion.button>
                 </motion.div>
               </>
             ) : (
@@ -253,11 +233,13 @@ export default function Navbar() {
                   to="/login"
                   className="relative group px-4 py-2 rounded-xl text-gray-600 hover:text-pink-500 transition-all duration-300"
                 >
-                  <span className="flex items-center space-x-2 relative z-10">
+                  <motion.span
+                    whileHover={hoverAnimation}
+                    className="flex items-center space-x-2 relative z-10"
+                  >
                     <ArrowLeftOnRectangleIcon className="h-5 w-5" />
-                    <span className="text-base">Entrar</span>
-                  </span>
-                  <span className="absolute inset-0 w-full h-full rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+                    <span className="text-base font-medium">Entrar</span>
+                  </motion.span>
                 </Link>
               </motion.div>
             )}
@@ -265,13 +247,14 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <motion.div variants={item} className="md:hidden">
-            <button
+            <motion.button
+              whileHover={hoverAnimation}
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-xl text-gray-600 hover:text-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all duration-300"
             >
               <SparklesIcon className="h-6 w-6" />
-            </button>
+            </motion.button>
           </motion.div>
         </div>
       </div>
@@ -283,7 +266,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden bg-white/90 backdrop-blur-md shadow-xl"
+            className="md:hidden bg-white/90 backdrop-blur-lg shadow-xl"
           >
             <div className="px-3 py-2 space-y-1">
               <Link
@@ -295,10 +278,13 @@ export default function Navbar() {
                     : "text-gray-600 hover:text-pink-500"
                 }`}
               >
-                <span className="flex items-center space-x-2 relative z-10">
+                <motion.span
+                  whileHover={hoverAnimation}
+                  className="flex items-center space-x-2 relative z-10"
+                >
                   <HomeIcon className="h-5 w-5" />
                   <span>Home</span>
-                </span>
+                </motion.span>
                 {location.pathname === "/" && (
                   <motion.div
                     layoutId="activeNavItemMobile"
@@ -316,10 +302,13 @@ export default function Navbar() {
                     : "text-gray-600 hover:text-pink-500"
                 }`}
               >
-                <span className="flex items-center space-x-2 relative z-10">
+                <motion.span
+                  whileHover={hoverAnimation}
+                  className="flex items-center space-x-2 relative z-10"
+                >
                   <BookOpenIcon className="h-5 w-5" />
                   <span>Receitas</span>
-                </span>
+                </motion.span>
                 {location.pathname === "/recipes" && (
                   <motion.div
                     layoutId="activeNavItemMobile"
@@ -339,10 +328,13 @@ export default function Navbar() {
                         : "text-gray-600 hover:text-pink-500"
                     }`}
                   >
-                    <span className="flex items-center space-x-2 relative z-10">
+                    <motion.span
+                      whileHover={hoverAnimation}
+                      className="flex items-center space-x-2 relative z-10"
+                    >
                       <UserIcon className="h-5 w-5" />
                       <span>Perfil</span>
-                    </span>
+                    </motion.span>
                     {location.pathname === "/profile" && (
                       <motion.div
                         layoutId="activeNavItemMobile"
@@ -355,7 +347,8 @@ export default function Navbar() {
                       />
                     )}
                   </Link>
-                  <button
+                  <motion.button
+                    whileHover={hoverAnimation}
                     onClick={() => {
                       handleLogout();
                       setIsMobileMenuOpen(false);
@@ -366,7 +359,7 @@ export default function Navbar() {
                       <ArrowRightOnRectangleIcon className="h-5 w-5" />
                       <span>Sair</span>
                     </span>
-                  </button>
+                  </motion.button>
                 </>
               ) : (
                 <Link
@@ -374,10 +367,13 @@ export default function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block relative px-3 py-2 rounded-lg text-base font-medium text-gray-600 hover:text-pink-500"
                 >
-                  <span className="flex items-center space-x-2 relative z-10">
+                  <motion.span
+                    whileHover={hoverAnimation}
+                    className="flex items-center space-x-2 relative z-10"
+                  >
                     <ArrowLeftOnRectangleIcon className="h-5 w-5" />
                     <span>Entrar</span>
-                  </span>
+                  </motion.span>
                 </Link>
               )}
             </div>
