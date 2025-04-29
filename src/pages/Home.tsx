@@ -90,49 +90,53 @@ export default function Home() {
               style={{ width: 440, height: 440 }}
             >
               {/* Compliments around the image */}
-              {compliments.map((compliment, index) => {
-                let complimentsRadius = 180;
-                // Distribuição simétrica: 4 à direita, 4 à esquerda
-                // Ângulos: -90, -45, 0, 45 (direita); 90, 135, 180, 225 (esquerda)
-                const angleSteps = [-90, -45, 0, 45, 90, 135, 180, 225];
-                const angle = angleSteps[index % compliments.length];
-                // Aumenta o raio para os elogios mais embaixo
-                if (angle > 100 && angle < 260) {
-                  complimentsRadius = 270;
-                }
-                const x = Math.cos((angle * Math.PI) / 180) * complimentsRadius;
-                const y = Math.sin((angle * Math.PI) / 180) * complimentsRadius;
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      x: x,
-                      y: y,
-                    }}
-                    transition={{
-                      duration: 0.8,
-                      delay: index * 0.2,
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 10,
-                    }}
-                    style={{
-                      position: "absolute",
-                      left: "50%",
-                      top: "50%",
-                      transform: `translate(-50%, -50%)`,
-                      pointerEvents: "none",
-                      zIndex: 1,
-                    }}
-                    className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg whitespace-nowrap"
-                  >
-                    {compliment}
-                  </motion.div>
-                );
-              })}
+              <div className="hidden sm:block">
+                {compliments.map((compliment, index) => {
+                  let complimentsRadius = 180;
+                  // Distribuição simétrica: 4 à direita, 4 à esquerda
+                  // Ângulos: -90, -45, 0, 45 (direita); 90, 135, 180, 225 (esquerda)
+                  const angleSteps = [-90, -45, 0, 45, 90, 135, 180, 225];
+                  const angle = angleSteps[index % compliments.length];
+                  // Aumenta o raio para os elogios mais embaixo
+                  if (angle > 100 && angle < 260) {
+                    complimentsRadius = 270;
+                  }
+                  const x =
+                    Math.cos((angle * Math.PI) / 180) * complimentsRadius;
+                  const y =
+                    Math.sin((angle * Math.PI) / 180) * complimentsRadius;
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                        x: x,
+                        y: y,
+                      }}
+                      transition={{
+                        duration: 0.8,
+                        delay: index * 0.2,
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 10,
+                      }}
+                      style={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        transform: `translate(-50%, -50%)`,
+                        pointerEvents: "none",
+                        zIndex: 1,
+                      }}
+                      className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg whitespace-nowrap"
+                    >
+                      {compliment}
+                    </motion.div>
+                  );
+                })}
+              </div>
               {/* Central image */}
               <div
                 className="absolute left-1/2 top-1/2"
