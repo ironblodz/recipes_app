@@ -11,7 +11,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "Receitas da Maria",
+        name: "Receitas da Joana",
         short_name: "Receitas",
         start_url: "/",
         display: "standalone",
@@ -19,14 +19,14 @@ export default defineConfig({
         theme_color: "#ef4444",
         icons: [
           {
-            src: "/icon-192.png",
+            src: "./vite.svg",
             sizes: "192x192",
-            type: "image/png",
+            type: "image/svg+xml",
           },
           {
-            src: "/icon-512.png",
-            sizes: "512x512",
-            type: "image/png",
+            src: "./vite.svg",
+            sizes: "192x192",
+            type: "image/svg+xml",
           },
         ],
       },
@@ -39,7 +39,7 @@ export default defineConfig({
       "X-XSS-Protection": "1; mode=block",
       "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
       "Content-Security-Policy":
-        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com;",
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: https://*.firebasestorage.googleapis.com; font-src 'self' data:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com;",
     },
   },
 });

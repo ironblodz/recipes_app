@@ -23,14 +23,7 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-const occasions = [
-  "Dia a Dia",
-  "Aniversário",
-  "Dia dos Namorados",
-  "Data Especial",
-  "Surpresa",
-  "Outra",
-];
+const occasions = ["Doces", "Salgados"];
 
 const difficulties = ["Fácil", "Médio", "Difícil"];
 
@@ -40,11 +33,21 @@ const preparationTimes = [
   "Demorado (mais de 60 min)",
 ];
 
+const preparationSubSteps = [
+  "Bolo",
+  "Cobertura",
+  "Caldas",
+  "Montagem",
+  "Outros",
+];
+
 export default function NewRecipe() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ingredients, setIngredients] = useState([""]);
-  const [instructions, setInstructions] = useState([""]);
+  const [instructions, setInstructions] = useState([
+    { step: "", subStep: "Bolo" },
+  ]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [occasion, setOccasion] = useState("Dia a Dia");
@@ -68,11 +71,24 @@ export default function NewRecipe() {
   };
 
   const handleAddInstruction = () => {
-    setInstructions([...instructions, ""]);
+    setInstructions([...instructions, { step: "", subStep: "Bolo" }]);
   };
 
   const handleRemoveInstruction = (index: number) => {
     const newInstructions = instructions.filter((_, i) => i !== index);
+    setInstructions(newInstructions);
+  };
+
+  const handleInstructionChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    const newInstructions = [...instructions];
+    newInstructions[index] = {
+      ...newInstructions[index],
+      [field]: value,
+    };
     setInstructions(newInstructions);
   };
 
@@ -122,9 +138,7 @@ export default function NewRecipe() {
         };
 
         try {
-          // Upload the file with metadata
           const snapshot = await uploadBytes(storageRef, imageFile, metadata);
-          // Get the download URL using the snapshot
           imageUrl = await getDownloadURL(snapshot.ref);
         } catch (error) {
           console.error("Error uploading image:", error);
@@ -138,7 +152,10 @@ export default function NewRecipe() {
         title,
         description,
         ingredients: ingredients.filter(Boolean),
-        instructions: instructions.filter(Boolean),
+        instructions: instructions.map((instruction) => ({
+          step: instruction.step,
+          subStep: instruction.subStep,
+        })),
         imageUrl,
         occasion,
         difficulty,
@@ -405,41 +422,59 @@ export default function NewRecipe() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-gray-700">
-                  Modo de Preparo
-                </label>
-                <button
-                  type="button"
-                  onClick={handleAddInstruction}
-                  className="text-sm text-pink-600 hover:text-pink-700"
-                >
-                  + Adicionar Passo
-                </button>
-              </div>
-              <div className="mt-2 space-y-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Modo de Preparação
+              </label>
+              <div className="space-y-4">
                 {instructions.map((instruction, index) => (
-                  <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={instruction}
-                      onChange={(e) => {
-                        const newInstructions = [...instructions];
-                        newInstructions[index] = e.target.value;
-                        setInstructions(newInstructions);
-                      }}
-                      className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                      placeholder={`Passo ${index + 1}`}
-                    />
+                  <div key={index} className="flex gap-4">
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={instruction.step}
+                        onChange={(e) =>
+                          handleInstructionChange(index, "step", e.target.value)
+                        }
+                        required
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                        placeholder={`Passo ${index + 1}`}
+                      />
+                    </div>
+                    <div className="w-48">
+                      <select
+                        value={instruction.subStep}
+                        onChange={(e) =>
+                          handleInstructionChange(
+                            index,
+                            "subStep",
+                            e.target.value
+                          )
+                        }
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                      >
+                        {preparationSubSteps.map((subStep) => (
+                          <option key={subStep} value={subStep}>
+                            {subStep}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveInstruction(index)}
-                      className="text-red-600 hover:text-red-700"
+                      className="mt-1 px-4 py-2 text-red-600 hover:text-red-800"
                     >
-                      ×
+                      Remover
                     </button>
                   </div>
                 ))}
+                <button
+                  type="button"
+                  onClick={handleAddInstruction}
+                  className="mt-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+                >
+                  Adicionar Passo
+                </button>
               </div>
             </div>
 

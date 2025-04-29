@@ -16,8 +16,15 @@ interface Recipe {
   id: string;
   title: string;
   description: string;
-  ingredients: string[];
-  instructions: string[];
+  ingredients: Array<{
+    name: string;
+    quantity: string;
+    unit: string;
+  }>;
+  instructions: Array<{
+    step: string;
+    subStep: string;
+  }>;
   imageUrl?: string;
   userId: string;
   occasion: string;
@@ -223,7 +230,10 @@ export default function RecipeDetail() {
                     <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-pink-100 text-pink-600 mr-3 mt-1">
                       {index + 1}
                     </span>
-                    <span className="text-gray-700">{ingredient}</span>
+                    <span className="text-gray-700">
+                      {ingredient.quantity} {ingredient.unit} de{" "}
+                      {ingredient.name}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -238,16 +248,37 @@ export default function RecipeDetail() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                 Modo de Preparo
               </h2>
-              <ol className="space-y-4">
-                {recipe.instructions.map((instruction, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-purple-100 text-purple-600 mr-3 mt-1">
-                      {index + 1}
-                    </span>
-                    <span className="text-gray-700">{instruction}</span>
-                  </li>
-                ))}
-              </ol>
+              <div className="space-y-6">
+                {["Bolo", "Cobertura", "Caldas", "Montagem", "Outros"].map(
+                  (subStep) => {
+                    const subStepInstructions = recipe.instructions.filter(
+                      (instruction) => instruction.subStep === subStep
+                    );
+
+                    if (subStepInstructions.length === 0) return null;
+
+                    return (
+                      <div key={subStep} className="space-y-4">
+                        <h3 className="text-lg font-medium text-gray-800">
+                          {subStep}
+                        </h3>
+                        <ol className="space-y-4">
+                          {subStepInstructions.map((instruction, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-purple-100 text-purple-600 mr-3 mt-1">
+                                {index + 1}
+                              </span>
+                              <span className="text-gray-700">
+                                {instruction.step}
+                              </span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
             </motion.div>
           </div>
 
