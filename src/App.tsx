@@ -19,52 +19,67 @@ function App() {
           <Navbar />
           <div className="flex min-h-[calc(100vh-4rem)]">
             <main className="flex-1">
-              <div className="container">
-                <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/" element={<Home />} />
-                  <Route
-                    path="/recipes"
-                    element={
-                      <PrivateRoute>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/"
+                  element={
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+                      <Home />
+                    </div>
+                  }
+                />
+                <Route
+                  path="/recipes"
+                  element={
+                    <PrivateRoute>
+                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                         <Recipes />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route
-                    path="/recipes/:id"
-                    element={
-                      <PrivateRoute>
+                      </div>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/recipes/:id"
+                  element={
+                    <PrivateRoute>
+                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                         <RecipeDetail />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route
-                    path="/recipes/:id/edit"
-                    element={
-                      <PrivateRoute>
+                      </div>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/recipes/:id/edit"
+                  element={
+                    <PrivateRoute>
+                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                         <EditRecipe />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route
-                    path="/new-recipe"
-                    element={
-                      <PrivateRoute>
+                      </div>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/new-recipe"
+                  element={
+                    <PrivateRoute>
+                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                         <NewRecipe />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route
-                    path="/profile"
-                    element={
-                      <PrivateRoute>
+                      </div>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <PrivateRoute>
+                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                         <Profile />
-                      </PrivateRoute>
-                    }
-                  />
-                </Routes>
-              </div>
+                      </div>
+                    </PrivateRoute>
+                  }
+                />
+              </Routes>
             </main>
           </div>
           <Toaster position="bottom-right" />
