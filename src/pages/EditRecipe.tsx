@@ -12,6 +12,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
+import { TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 const container = {
   hidden: { opacity: 0 },
@@ -29,14 +30,6 @@ const item = {
 };
 
 const occasions = ["Doces", "Salgados"];
-
-const difficulties = ["Fácil", "Médio", "Difícil"];
-
-const preparationTimes = [
-  "Rápido (até 30 min)",
-  "Médio (30-60 min)",
-  "Demorado (mais de 60 min)",
-];
 
 const preparationSubSteps = [
   "Bolo",
@@ -66,7 +59,6 @@ interface Recipe {
   ingredients: Array<{
     name: string;
     quantity: string;
-    unit: string;
   }>;
   instructions: Array<{
     step: string;
@@ -75,10 +67,10 @@ interface Recipe {
   imageUrl?: string;
   userId: string;
   occasion: string;
-  difficulty: string;
-  preparationTime: string;
-  secretMessage?: string;
-  memories?: string[];
+  memories?: Array<{
+    text: string;
+    imageUrl?: string;
+  }>;
 }
 
 export default function EditRecipe() {
@@ -86,18 +78,21 @@ export default function EditRecipe() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ingredients, setIngredients] = useState<
-    Array<{ name: string; quantity: string; unit: string }>
-  >([{ name: "", quantity: "", unit: "g" }]);
+    Array<{ name: string; quantity: string }>
+  >([{ name: "", quantity: "" }]);
   const [instructions, setInstructions] = useState<
     Array<{ step: string; subStep: string }>
   >([{ step: "", subStep: "Bolo" }]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [occasion, setOccasion] = useState("Doces");
-  const [difficulty, setDifficulty] = useState("");
-  const [preparationTime, setPreparationTime] = useState("");
-  const [secretMessage, setSecretMessage] = useState("");
-  const [memories, setMemories] = useState([""]);
+  const [memories, setMemories] = useState<
+    Array<{ text: string; imageUrl?: string }>
+  >([{ text: "" }]);
+  const [memoryImages, setMemoryImages] = useState<Array<File | null>>([null]);
+  const [memoryImagePreviews, setMemoryImagePreviews] = useState<Array<string>>(
+    [""]
+  );
   const [loading, setLoading] = useState(false);
   const { id } = useParams<{ id: string }>();
   const { currentUser } = useAuth();
@@ -123,10 +118,11 @@ export default function EditRecipe() {
         setInstructions(recipeData.instructions);
         setImagePreview(recipeData.imageUrl || "");
         setOccasion(recipeData.occasion);
-        setDifficulty(recipeData.difficulty);
-        setPreparationTime(recipeData.preparationTime);
-        setSecretMessage(recipeData.secretMessage || "");
-        setMemories(recipeData.memories || [""]);
+        setMemories(recipeData.memories || [{ text: "" }]);
+        setMemoryImages(recipeData.memories?.map(() => null) || [null]);
+        setMemoryImagePreviews(
+          recipeData.memories?.map((memory) => memory.imageUrl || "") || [""]
+        );
       }
     }
 
@@ -134,7 +130,7 @@ export default function EditRecipe() {
   }, [id]);
 
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, { name: "", quantity: "", unit: "g" }]);
+    setIngredients([...ingredients, { name: "", quantity: "" }]);
   };
 
   const handleRemoveIngredient = (index: number) => {
@@ -178,11 +174,52 @@ export default function EditRecipe() {
   };
 
   const handleAddMemory = () => {
-    setMemories([...memories, ""]);
+    setMemories([...memories, { text: "" }]);
+    setMemoryImages([...memoryImages, null]);
+    setMemoryImagePreviews([...memoryImagePreviews, ""]);
   };
 
   const handleRemoveMemory = (index: number) => {
     const newMemories = memories.filter((_, i) => i !== index);
+    const newMemoryImages = memoryImages.filter((_, i) => i !== index);
+    const newMemoryImagePreviews = memoryImagePreviews.filter(
+      (_, i) => i !== index
+    );
+    setMemories(newMemories);
+    setMemoryImages(newMemoryImages);
+    setMemoryImagePreviews(newMemoryImagePreviews);
+  };
+
+  const handleMemoryImageChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("A imagem deve ter menos de 10MB");
+        return;
+      }
+      const newMemoryImages = [...memoryImages];
+      newMemoryImages[index] = file;
+      setMemoryImages(newMemoryImages);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newMemoryImagePreviews = [...memoryImagePreviews];
+        newMemoryImagePreviews[index] = reader.result as string;
+        setMemoryImagePreviews(newMemoryImagePreviews);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMemoryTextChange = (index: number, value: string) => {
+    const newMemories = [...memories];
+    newMemories[index] = {
+      ...newMemories[index],
+      text: value,
+    };
     setMemories(newMemories);
   };
 
@@ -209,7 +246,9 @@ export default function EditRecipe() {
     setLoading(true);
     try {
       let imageUrl = recipe.imageUrl;
+      const memoryImageUrls: string[] = [];
 
+      // Upload new recipe image if changed
       if (imageFile) {
         if (recipe.imageUrl) {
           try {
@@ -242,6 +281,40 @@ export default function EditRecipe() {
         }
       }
 
+      // Upload memory images
+      for (let i = 0; i < memoryImages.length; i++) {
+        const memoryImage = memoryImages[i];
+        if (memoryImage) {
+          const storageRef = ref(
+            storage,
+            `recipes/${currentUser.uid}/memories/${Date.now()}_${
+              memoryImage.name
+            }`
+          );
+          const metadata = {
+            contentType: memoryImage.type,
+            customMetadata: {
+              uploadedBy: currentUser.uid,
+            },
+          };
+
+          try {
+            const snapshot = await uploadBytes(
+              storageRef,
+              memoryImage,
+              metadata
+            );
+            const url = await getDownloadURL(snapshot.ref);
+            memoryImageUrls[i] = url;
+          } catch (error) {
+            console.error("Error uploading memory image:", error);
+            toast.error("Erro ao fazer upload da imagem da memória");
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
       const recipeData = {
         title,
         description,
@@ -252,10 +325,10 @@ export default function EditRecipe() {
         })),
         imageUrl,
         occasion,
-        difficulty,
-        preparationTime,
-        secretMessage,
-        memories: memories.filter(Boolean),
+        memories: memories.map((memory, index) => ({
+          text: memory.text,
+          imageUrl: memoryImageUrls[index] || memory.imageUrl,
+        })),
         userId: currentUser.uid,
       };
 
@@ -353,72 +426,7 @@ export default function EditRecipe() {
                   ))}
                 </select>
               </div>
-
-              <div>
-                <label
-                  htmlFor="difficulty"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Dificuldade
-                </label>
-                <select
-                  id="difficulty"
-                  value={difficulty}
-                  onChange={(e) => setDifficulty(e.target.value)}
-                  required
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                >
-                  <option value="">Selecione a dificuldade</option>
-                  {difficulties.map((diff) => (
-                    <option key={diff} value={diff}>
-                      {diff}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="preparationTime"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Tempo de Preparo
-                </label>
-                <select
-                  id="preparationTime"
-                  value={preparationTime}
-                  onChange={(e) => setPreparationTime(e.target.value)}
-                  required
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                >
-                  <option value="">Selecione o tempo</option>
-                  {preparationTimes.map((time) => (
-                    <option key={time} value={time}>
-                      {time}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
-
-            {occasion !== "Dia a Dia" && (
-              <div>
-                <label
-                  htmlFor="secretMessage"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Mensagem Especial
-                </label>
-                <input
-                  type="text"
-                  id="secretMessage"
-                  value={secretMessage}
-                  onChange={(e) => setSecretMessage(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                  placeholder="Deixe uma mensagem especial..."
-                />
-              </div>
-            )}
 
             <div>
               <label
@@ -487,66 +495,61 @@ export default function EditRecipe() {
               </label>
               <div className="space-y-4">
                 {ingredients.map((ingredient, index) => (
-                  <div key={index} className="flex gap-4">
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        value={ingredient.name}
-                        onChange={(e) =>
-                          handleIngredientChange(index, "name", e.target.value)
-                        }
-                        required
-                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                        placeholder="Nome do ingrediente"
-                      />
+                  <div key={index} className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={ingredient.name}
+                          onChange={(e) =>
+                            handleIngredientChange(
+                              index,
+                              "name",
+                              e.target.value
+                            )
+                          }
+                          required
+                          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                          placeholder="Nome do ingrediente"
+                        />
+                      </div>
+                      <div className="w-full sm:w-48">
+                        <input
+                          type="text"
+                          value={ingredient.quantity}
+                          onChange={(e) =>
+                            handleIngredientChange(
+                              index,
+                              "quantity",
+                              e.target.value
+                            )
+                          }
+                          required
+                          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                          placeholder="Quantidade (ex: 200g, 1 colher de sopa)"
+                        />
+                      </div>
                     </div>
-                    <div className="w-32">
-                      <input
-                        type="text"
-                        value={ingredient.quantity}
-                        onChange={(e) =>
-                          handleIngredientChange(
-                            index,
-                            "quantity",
-                            e.target.value
-                          )
-                        }
-                        required
-                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                        placeholder="Quantidade"
-                      />
-                    </div>
-                    <div className="w-48">
-                      <select
-                        value={ingredient.unit}
-                        onChange={(e) =>
-                          handleIngredientChange(index, "unit", e.target.value)
-                        }
-                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                    <div className="flex justify-between items-center">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveIngredient(index)}
+                        className="p-2 text-red-600 hover:text-red-800"
                       >
-                        {units.map((unit) => (
-                          <option key={unit} value={unit}>
-                            {unit}
-                          </option>
-                        ))}
-                      </select>
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
+                      {index === ingredients.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={handleAddIngredient}
+                          className="p-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+                        >
+                          <PlusIcon className="h-5 w-5" />
+                        </button>
+                      )}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveIngredient(index)}
-                      className="mt-1 px-4 py-2 text-red-600 hover:text-red-800"
-                    >
-                      Remover
-                    </button>
                   </div>
                 ))}
-                <button
-                  type="button"
-                  onClick={handleAddIngredient}
-                  className="mt-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
-                >
-                  Adicionar Ingrediente
-                </button>
               </div>
             </div>
 
@@ -556,97 +559,171 @@ export default function EditRecipe() {
               </label>
               <div className="space-y-4">
                 {instructions.map((instruction, index) => (
-                  <div key={index} className="flex gap-4">
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        value={instruction.step}
-                        onChange={(e) =>
-                          handleInstructionChange(index, "step", e.target.value)
-                        }
-                        required
-                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                        placeholder={`Passo ${index + 1}`}
-                      />
+                  <div key={index} className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={instruction.step}
+                          onChange={(e) =>
+                            handleInstructionChange(
+                              index,
+                              "step",
+                              e.target.value
+                            )
+                          }
+                          required
+                          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                          placeholder={`Passo ${index + 1}`}
+                        />
+                      </div>
+                      <div className="w-full sm:w-48">
+                        <select
+                          value={instruction.subStep}
+                          onChange={(e) =>
+                            handleInstructionChange(
+                              index,
+                              "subStep",
+                              e.target.value
+                            )
+                          }
+                          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                        >
+                          {preparationSubSteps.map((subStep) => (
+                            <option key={subStep} value={subStep}>
+                              {subStep}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                    <div className="w-48">
-                      <select
-                        value={instruction.subStep}
-                        onChange={(e) =>
-                          handleInstructionChange(
-                            index,
-                            "subStep",
-                            e.target.value
-                          )
-                        }
-                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                    <div className="flex justify-between items-center">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveInstruction(index)}
+                        className="p-2 text-red-600 hover:text-red-800"
                       >
-                        {preparationSubSteps.map((subStep) => (
-                          <option key={subStep} value={subStep}>
-                            {subStep}
-                          </option>
-                        ))}
-                      </select>
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
+                      {index === instructions.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={handleAddInstruction}
+                          className="p-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+                        >
+                          <PlusIcon className="h-5 w-5" />
+                        </button>
+                      )}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveInstruction(index)}
-                      className="mt-1 px-4 py-2 text-red-600 hover:text-red-800"
-                    >
-                      Remover
-                    </button>
                   </div>
                 ))}
-                <button
-                  type="button"
-                  onClick={handleAddInstruction}
-                  className="mt-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
-                >
-                  Adicionar Passo
-                </button>
               </div>
             </div>
 
-            {occasion !== "Dia a Dia" && (
-              <div>
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Memórias Especiais
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleAddMemory}
-                    className="text-sm text-pink-600 hover:text-pink-700"
-                  >
-                    + Adicionar Memória
-                  </button>
-                </div>
-                <div className="mt-2 space-y-2">
-                  {memories.map((memory, index) => (
-                    <div key={index} className="flex gap-2">
-                      <input
-                        type="text"
-                        value={memory}
-                        onChange={(e) => {
-                          const newMemories = [...memories];
-                          newMemories[index] = e.target.value;
-                          setMemories(newMemories);
-                        }}
-                        className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                        placeholder={`Memória ${index + 1}`}
-                      />
+            <div>
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">
+                  Memórias Especiais
+                </label>
+                <button
+                  type="button"
+                  onClick={handleAddMemory}
+                  className="text-sm text-pink-600 hover:text-pink-700"
+                >
+                  + Adicionar Memória
+                </button>
+              </div>
+              <div className="mt-2 space-y-4">
+                {memories.map((memory, index) => (
+                  <div key={index} className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={memory.text}
+                          onChange={(e) =>
+                            handleMemoryTextChange(index, e.target.value)
+                          }
+                          className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                          placeholder={`Memória ${index + 1}`}
+                        />
+                      </div>
+                      <div className="w-full sm:w-48">
+                        <div className="mt-1 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-4">
+                          <div className="text-center">
+                            {memoryImagePreviews[index] || memory.imageUrl ? (
+                              <div className="relative">
+                                <img
+                                  src={
+                                    memoryImagePreviews[index] ||
+                                    memory.imageUrl
+                                  }
+                                  alt="Preview"
+                                  className="mx-auto h-24 w-24 object-cover rounded-lg"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newMemoryImagePreviews = [
+                                      ...memoryImagePreviews,
+                                    ];
+                                    newMemoryImagePreviews[index] = "";
+                                    setMemoryImagePreviews(
+                                      newMemoryImagePreviews
+                                    );
+                                    const newMemoryImages = [...memoryImages];
+                                    newMemoryImages[index] = null;
+                                    setMemoryImages(newMemoryImages);
+                                  }}
+                                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ) : (
+                              <PhotoIcon
+                                className="mx-auto h-8 w-8 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            )}
+                            <div className="mt-2 flex text-sm text-gray-600">
+                              <label
+                                htmlFor={`memory-image-${index}`}
+                                className="relative cursor-pointer rounded-md bg-white font-medium text-pink-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-pink-500 focus-within:ring-offset-2 hover:text-pink-500"
+                              >
+                                <span>Carregar imagem</span>
+                                <input
+                                  id={`memory-image-${index}`}
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) =>
+                                    handleMemoryImageChange(index, e)
+                                  }
+                                  className="sr-only"
+                                />
+                              </label>
+                              <p className="pl-1">ou arraste e solte</p>
+                            </div>
+                            <p className="text-xs text-gray-500">
+                              PNG, JPG, GIF até 10MB
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
                       <button
                         type="button"
                         onClick={() => handleRemoveMemory(index)}
-                        className="text-red-600 hover:text-red-700"
+                        className="p-2 text-red-600 hover:text-red-800"
                       >
-                        ×
+                        <TrashIcon className="h-5 w-5" />
                       </button>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
           </motion.div>
 
           <motion.div variants={item} className="flex justify-end space-x-4">

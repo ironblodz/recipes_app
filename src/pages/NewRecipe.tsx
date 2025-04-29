@@ -30,14 +30,6 @@ const item = {
 
 const occasions = ["Doces", "Salgados"];
 
-const difficulties = ["Fácil", "Médio", "Difícil"];
-
-const preparationTimes = [
-  "Rápido (até 30 min)",
-  "Médio (30-60 min)",
-  "Demorado (mais de 60 min)",
-];
-
 const preparationSubSteps = [
   "Bolo",
   "Cobertura",
@@ -71,9 +63,6 @@ export default function NewRecipe() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [occasion, setOccasion] = useState("Doces");
-  const [difficulty, setDifficulty] = useState("");
-  const [preparationTime, setPreparationTime] = useState("");
-  const [secretMessage, setSecretMessage] = useState("");
   const [memories, setMemories] = useState([""]);
   const [loading, setLoading] = useState(false);
   const { currentUser } = useAuth();
@@ -190,9 +179,6 @@ export default function NewRecipe() {
         })),
         imageUrl,
         occasion,
-        difficulty,
-        preparationTime,
-        secretMessage,
         memories: memories.filter(Boolean),
         userId: currentUser.uid,
         createdAt: serverTimestamp(),
@@ -286,72 +272,7 @@ export default function NewRecipe() {
                   ))}
                 </select>
               </div>
-
-              <div>
-                <label
-                  htmlFor="difficulty"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Dificuldade
-                </label>
-                <select
-                  id="difficulty"
-                  value={difficulty}
-                  onChange={(e) => setDifficulty(e.target.value)}
-                  required
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                >
-                  <option value="">Selecione a dificuldade</option>
-                  {difficulties.map((diff) => (
-                    <option key={diff} value={diff}>
-                      {diff}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="preparationTime"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Tempo de Preparo
-                </label>
-                <select
-                  id="preparationTime"
-                  value={preparationTime}
-                  onChange={(e) => setPreparationTime(e.target.value)}
-                  required
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                >
-                  <option value="">Selecione o tempo</option>
-                  {preparationTimes.map((time) => (
-                    <option key={time} value={time}>
-                      {time}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
-
-            {occasion !== "Dia a Dia" && (
-              <div>
-                <label
-                  htmlFor="secretMessage"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Mensagem Especial
-                </label>
-                <input
-                  type="text"
-                  id="secretMessage"
-                  value={secretMessage}
-                  onChange={(e) => setSecretMessage(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                  placeholder="Deixe uma mensagem especial..."
-                />
-              </div>
-            )}
 
             <div>
               <label
@@ -544,46 +465,44 @@ export default function NewRecipe() {
               </div>
             </div>
 
-            {occasion !== "Dia a Dia" && (
-              <div>
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Memórias Especiais
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleAddMemory}
-                    className="text-sm text-pink-600 hover:text-pink-700"
-                  >
-                    + Adicionar Memória
-                  </button>
-                </div>
-                <div className="mt-2 space-y-2">
-                  {memories.map((memory, index) => (
-                    <div key={index} className="flex gap-2">
-                      <input
-                        type="text"
-                        value={memory}
-                        onChange={(e) => {
-                          const newMemories = [...memories];
-                          newMemories[index] = e.target.value;
-                          setMemories(newMemories);
-                        }}
-                        className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                        placeholder={`Memória ${index + 1}`}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveMemory(index)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">
+                  Memórias Especiais
+                </label>
+                <button
+                  type="button"
+                  onClick={handleAddMemory}
+                  className="text-sm text-pink-600 hover:text-pink-700"
+                >
+                  + Adicionar Memória
+                </button>
               </div>
-            )}
+              <div className="mt-2 space-y-2">
+                {memories.map((memory, index) => (
+                  <div key={index} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={memory}
+                      onChange={(e) => {
+                        const newMemories = [...memories];
+                        newMemories[index] = e.target.value;
+                        setMemories(newMemories);
+                      }}
+                      className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                      placeholder={`Memória ${index + 1}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveMemory(index)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </motion.div>
 
           <motion.div variants={item} className="flex justify-end space-x-4">
