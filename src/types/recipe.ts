@@ -6,6 +6,7 @@ export interface Recipe {
   ingredients: Array<{
     name: string;
     quantity: string;
+    subStep: string;
   }>;
   instructions: Array<{
     step: string;

@@ -260,7 +260,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden bg-white/90 backdrop-blur-lg shadow-xl"
+            className="md:hidden bg-white shadow-xl"
           >
             <div className="px-3 py-2 space-y-1">
               <Link

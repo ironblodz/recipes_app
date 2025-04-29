@@ -18,24 +18,15 @@ function App() {
         <div className="min-h-screen bg-background">
           <Navbar />
           <div className="flex min-h-[calc(100vh-4rem)]">
-            <main className="flex-1">
+            <main className="flex-1 w-full">
               <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route
-                  path="/"
-                  element={
-                    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                      <Home />
-                    </div>
-                  }
-                />
+                <Route path="/" element={<Home />} />
                 <Route
                   path="/recipes"
                   element={
                     <PrivateRoute>
-                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                        <Recipes />
-                      </div>
+                      <Recipes />
                     </PrivateRoute>
                   }
                 />
@@ -43,9 +34,7 @@ function App() {
                   path="/recipes/:id"
                   element={
                     <PrivateRoute>
-                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                        <RecipeDetail />
-                      </div>
+                      <RecipeDetail />
                     </PrivateRoute>
                   }
                 />
@@ -53,9 +42,7 @@ function App() {
                   path="/recipes/:id/edit"
                   element={
                     <PrivateRoute>
-                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                        <EditRecipe />
-                      </div>
+                      <EditRecipe />
                     </PrivateRoute>
                   }
                 />
@@ -63,9 +50,7 @@ function App() {
                   path="/new-recipe"
                   element={
                     <PrivateRoute>
-                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                        <NewRecipe />
-                      </div>
+                      <NewRecipe />
                     </PrivateRoute>
                   }
                 />
@@ -73,9 +58,7 @@ function App() {
                   path="/profile"
                   element={
                     <PrivateRoute>
-                      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-                        <Profile />
-                      </div>
+                      <Profile />
                     </PrivateRoute>
                   }
                 />

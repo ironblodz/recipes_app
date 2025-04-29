@@ -64,8 +64,8 @@ export default function EditRecipe() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ingredients, setIngredients] = useState<
-    Array<{ name: string; quantity: string }>
-  >([{ name: "", quantity: "" }]);
+    Array<{ name: string; quantity: string; subStep: string }>
+  >([{ name: "", quantity: "", subStep: "Bolo" }]);
   const [instructions, setInstructions] = useState<
     Array<{ step: string; subStep: string }>
   >([{ step: "", subStep: "Bolo" }]);
@@ -100,7 +100,12 @@ export default function EditRecipe() {
         setRecipe(recipeData);
         setTitle(recipeData.title);
         setDescription(recipeData.description);
-        setIngredients(recipeData.ingredients);
+        setIngredients(
+          recipeData.ingredients.map((i) => ({
+            ...i,
+            subStep: i.subStep || "Bolo",
+          }))
+        );
         setInstructions(recipeData.instructions);
         setImagePreview(recipeData.imageUrl || "");
         setOccasion(recipeData.occasion);
@@ -116,7 +121,10 @@ export default function EditRecipe() {
   }, [id]);
 
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, { name: "", quantity: "" }]);
+    setIngredients([
+      ...ingredients,
+      { name: "", quantity: "", subStep: "Bolo" },
+    ]);
   };
 
   const handleRemoveIngredient = (index: number) => {
@@ -342,7 +350,11 @@ export default function EditRecipe() {
       const recipeData = {
         title,
         description,
-        ingredients: ingredients.filter(Boolean),
+        ingredients: ingredients.filter(Boolean).map((i) => ({
+          name: i.name,
+          quantity: i.quantity,
+          subStep: i.subStep,
+        })),
         instructions: instructions.map((instruction) => ({
           step: instruction.step,
           subStep: instruction.subStep,
@@ -551,6 +563,25 @@ export default function EditRecipe() {
                           className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
                           placeholder="Quantidade (ex: 200g, 1 colher de sopa)"
                         />
+                      </div>
+                      <div className="w-full sm:w-48">
+                        <select
+                          value={ingredient.subStep}
+                          onChange={(e) =>
+                            handleIngredientChange(
+                              index,
+                              "subStep",
+                              e.target.value
+                            )
+                          }
+                          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                        >
+                          {preparationSubSteps.map((subStep) => (
+                            <option key={subStep} value={subStep}>
+                              {subStep}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                     <div className="flex justify-between items-center">
