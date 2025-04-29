@@ -703,6 +703,15 @@ export default function EditRecipe() {
                         )
                       )}
                     </div>
+                    <div className="flex justify-between items-center">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveMemory(index)}
+                        className="p-2 text-red-600 hover:text-red-800"
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
+                    </div>
                     <div className="mt-2 space-y-2">
                       <label
                         htmlFor={`memoryImage${index}`}
