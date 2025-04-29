@@ -1,13 +1,8 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
-import { BookOpenIcon, HeartIcon } from "@heroicons/react/24/outline";
-import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
+import { useRef } from "react";
 import { Toaster } from "react-hot-toast";
 
 const compliments = [
@@ -94,7 +89,6 @@ const floatingComplimentAnimation = {
 export default function Home() {
   const { currentUser } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [currentCompliment, setCurrentCompliment] = useState(0);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -102,13 +96,6 @@ export default function Home() {
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentCompliment((prev) => (prev + 1) % compliments.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div ref={containerRef} className="h-screen overflow-hidden">
@@ -143,46 +130,74 @@ export default function Home() {
             transition={{ duration: 0.3 }}
             className="space-y-8"
           >
-            {/* Joana's Image Section */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative mx-auto w-64 h-64 rounded-full overflow-hidden border-4 border-white shadow-2xl"
+            {/* Joana's Image Section + Compliments */}
+            <div
+              className="relative mx-auto flex items-center justify-center"
+              style={{ width: 440, height: 440 }}
             >
-              <img
-                src="/joana.jpg"
-                alt="Joana"
-                className="w-full h-full object-cover"
-              />
-              <motion.div
-                variants={heartAnimation}
-                initial="initial"
-                animate="animate"
-                className="absolute -top-4 -right-4 bg-white rounded-full p-2 shadow-lg"
-              >
-                <HeartIcon className="h-8 w-8 text-pink-500" />
-              </motion.div>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentCompliment}
-                  variants={complimentAnimation}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  className="absolute -top-20 left-1/2 transform -translate-x-1/2 z-10"
-                >
+              {/* Compliments around the image */}
+              {compliments.map((compliment, index) => {
+                let complimentsRadius = 180;
+                // Distribuição simétrica: 4 à direita, 4 à esquerda
+                // Ângulos: -90, -45, 0, 45 (direita); 90, 135, 180, 225 (esquerda)
+                const angleSteps = [-90, -45, 0, 45, 90, 135, 180, 225];
+                const angle = angleSteps[index % compliments.length];
+                // Aumenta o raio para os elogios mais embaixo
+                if (angle > 100 && angle < 260) {
+                  complimentsRadius = 270;
+                }
+                const x = Math.cos((angle * Math.PI) / 180) * complimentsRadius;
+                const y = Math.sin((angle * Math.PI) / 180) * complimentsRadius;
+                return (
                   <motion.div
-                    variants={floatingComplimentAnimation}
-                    initial="initial"
-                    animate="animate"
-                    className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-3 rounded-full text-lg font-bold shadow-xl whitespace-nowrap backdrop-blur-sm"
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      x: x,
+                      y: y,
+                    }}
+                    transition={{
+                      duration: 0.8,
+                      delay: index * 0.2,
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 10,
+                    }}
+                    style={{
+                      position: "absolute",
+                      left: "50%",
+                      top: "50%",
+                      transform: `translate(-50%, -50%)`,
+                      pointerEvents: "none",
+                      zIndex: 1,
+                    }}
+                    className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg whitespace-nowrap"
                   >
-                    {compliments[currentCompliment]}
+                    {compliment}
                   </motion.div>
+                );
+              })}
+              {/* Central image */}
+              <div
+                className="absolute left-1/2 top-1/2"
+                style={{ transform: "translate(-50%, -50%)", zIndex: 2 }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="w-64 h-64 rounded-full overflow-visible border-4 border-white shadow-2xl bg-white"
+                >
+                  <img
+                    src="/joana.jpg"
+                    alt="Joana"
+                    className="w-full h-full object-cover rounded-full"
+                  />
                 </motion.div>
-              </AnimatePresence>
-            </motion.div>
+              </div>
+            </div>
 
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
