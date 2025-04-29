@@ -87,7 +87,12 @@ export default function Home() {
             {/* Joana's Image Section + Compliments */}
             <div
               className="relative mx-auto flex items-center justify-center"
-              style={{ width: 440, height: 440 }}
+              style={{
+                width: "100%",
+                maxWidth: 440,
+                height: "auto",
+                aspectRatio: "1/1",
+              }}
             >
               {/* Compliments around the image */}
               <div className="hidden sm:block">
@@ -139,14 +144,14 @@ export default function Home() {
               </div>
               {/* Central image */}
               <div
-                className="absolute left-1/2 top-1/2"
+                className="absolute left-1/2 top-1/2 w-full max-w-[16rem] sm:max-w-[16rem]"
                 style={{ transform: "translate(-50%, -50%)", zIndex: 2 }}
               >
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="w-64 h-64 rounded-full overflow-visible border-4 border-white shadow-2xl bg-white"
+                  className="w-full aspect-square rounded-full overflow-visible border-4 border-white shadow-2xl bg-white"
                 >
                   <img
                     src="/joana.jpg"
@@ -161,7 +166,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.05 }}
-              className="text-6xl md:text-8xl font-bold text-gray-900 mb-6"
+              className="text-4xl sm:text-6xl md:text-8xl font-bold text-gray-900 mb-6"
             >
               Receitas da Joana
             </motion.h1>
@@ -170,7 +175,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
-              className="text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto"
+              className="text-lg sm:text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto px-4"
             >
               A tua aplicação privada de receitas favoritas ❤️
             </motion.p>
