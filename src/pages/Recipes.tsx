@@ -18,7 +18,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { useInView } from "react-intersection-observer";
 import toast from "react-hot-toast";
-import { useSpring, animated } from "@react-spring/web";
 
 interface Recipe {
   id: string;
@@ -43,12 +42,6 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-const searchSpring = {
-  from: { scale: 0.95, opacity: 0 },
-  to: { scale: 1, opacity: 1 },
-  config: { tension: 300, friction: 20 },
-};
-
 export default function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,8 +51,6 @@ export default function Recipes() {
     triggerOnce: true,
     threshold: 0.1,
   });
-
-  const searchProps = useSpring(searchSpring);
 
   useEffect(() => {
     async function fetchRecipes() {
