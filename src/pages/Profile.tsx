@@ -145,9 +145,9 @@ export default function Profile() {
     >
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
         {/* Profile Header */}
-        <div className="relative h-48 bg-gradient-to-r from-pink-500 to-purple-500">
+        <div className="relative h-64 sm:h-48 bg-gradient-to-r from-pink-500 to-purple-500">
           <div className="absolute bottom-0 left-0 right-0 p-6">
-            <div className="flex items-end space-x-4">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end space-y-4 sm:space-y-0 sm:space-x-4">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-white p-1 shadow-lg">
                   {photoPreview ? (
