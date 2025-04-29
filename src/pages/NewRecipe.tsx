@@ -41,10 +41,25 @@ const preparationSubSteps = [
   "Outros",
 ];
 
+const units = [
+  "g",
+  "kg",
+  "ml",
+  "l",
+  "colher de sopa",
+  "colher de chá",
+  "xícara",
+  "pitada",
+  "unidade",
+  "a gosto",
+];
+
 export default function NewRecipe() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [ingredients, setIngredients] = useState([""]);
+  const [ingredients, setIngredients] = useState<
+    Array<{ name: string; quantity: string; unit: string }>
+  >([{ name: "", quantity: "", unit: "g" }]);
   const [instructions, setInstructions] = useState([
     { step: "", subStep: "Bolo" },
   ]);
@@ -62,7 +77,7 @@ export default function NewRecipe() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, ""]);
+    setIngredients([...ingredients, { name: "", quantity: "", unit: "g" }]);
   };
 
   const handleRemoveIngredient = (index: number) => {
@@ -99,6 +114,19 @@ export default function NewRecipe() {
   const handleRemoveMemory = (index: number) => {
     const newMemories = memories.filter((_, i) => i !== index);
     setMemories(newMemories);
+  };
+
+  const handleIngredientChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    const newIngredients = [...ingredients];
+    newIngredients[index] = {
+      ...newIngredients[index],
+      [field]: value,
+    };
+    setIngredients(newIngredients);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,7 +179,11 @@ export default function NewRecipe() {
       const recipeData = {
         title,
         description,
-        ingredients: ingredients.filter(Boolean),
+        ingredients: ingredients.map((ingredient) => ({
+          name: ingredient.name,
+          quantity: ingredient.quantity,
+          unit: ingredient.unit,
+        })),
         instructions: instructions.map((instruction) => ({
           step: instruction.step,
           subStep: instruction.subStep,
@@ -383,41 +415,71 @@ export default function NewRecipe() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-gray-700">
-                  Ingredientes
-                </label>
-                <button
-                  type="button"
-                  onClick={handleAddIngredient}
-                  className="text-sm text-pink-600 hover:text-pink-700"
-                >
-                  + Adicionar Ingrediente
-                </button>
-              </div>
-              <div className="mt-2 space-y-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Ingredientes
+              </label>
+              <div className="space-y-4">
                 {ingredients.map((ingredient, index) => (
-                  <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={ingredient}
-                      onChange={(e) => {
-                        const newIngredients = [...ingredients];
-                        newIngredients[index] = e.target.value;
-                        setIngredients(newIngredients);
-                      }}
-                      className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                      placeholder={`Ingrediente ${index + 1}`}
-                    />
+                  <div key={index} className="flex gap-4">
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={ingredient.name}
+                        onChange={(e) =>
+                          handleIngredientChange(index, "name", e.target.value)
+                        }
+                        required
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                        placeholder="Nome do ingrediente"
+                      />
+                    </div>
+                    <div className="w-32">
+                      <input
+                        type="text"
+                        value={ingredient.quantity}
+                        onChange={(e) =>
+                          handleIngredientChange(
+                            index,
+                            "quantity",
+                            e.target.value
+                          )
+                        }
+                        required
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                        placeholder="Quantidade"
+                      />
+                    </div>
+                    <div className="w-48">
+                      <select
+                        value={ingredient.unit}
+                        onChange={(e) =>
+                          handleIngredientChange(index, "unit", e.target.value)
+                        }
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                      >
+                        {units.map((unit) => (
+                          <option key={unit} value={unit}>
+                            {unit}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveIngredient(index)}
-                      className="text-red-600 hover:text-red-700"
+                      className="mt-1 px-4 py-2 text-red-600 hover:text-red-800"
                     >
-                      ×
+                      Remover
                     </button>
                   </div>
                 ))}
+                <button
+                  type="button"
+                  onClick={handleAddIngredient}
+                  className="mt-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+                >
+                  Adicionar Ingrediente
+                </button>
               </div>
             </div>
 
