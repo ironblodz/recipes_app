@@ -29,7 +29,9 @@ interface Recipe {
   userId: string;
   occasion: string;
   secretMessage?: string;
-  memories?: string[];
+  memories?: Array<{
+    imageUrls: string[];
+  }>;
 }
 
 export default function RecipeDetail() {
@@ -267,14 +269,20 @@ export default function RecipeDetail() {
               >
                 <div className="flex items-center text-pink-600 mb-4">
                   <PhotoIcon className="h-5 w-5 mr-2" />
-                  <h2 className="text-2xl font-semibold">Memórias Especiais</h2>
+                  <h2 className="text-2xl font-semibold">Galeria de Fotos</h2>
                 </div>
-                <div className="space-y-4">
-                  {recipe.memories.map((memory, index) => (
-                    <p key={index} className="text-pink-800">
-                      {memory}
-                    </p>
-                  ))}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {recipe.memories?.map((memory, index) =>
+                    memory.imageUrls?.map((imageUrl, imageIndex) => (
+                      <div key={`${index}-${imageIndex}`} className="relative">
+                        <img
+                          src={imageUrl}
+                          alt={`Foto ${imageIndex + 1}`}
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                      </div>
+                    ))
+                  )}
                 </div>
               </motion.div>
             )}

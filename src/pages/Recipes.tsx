@@ -33,7 +33,9 @@ interface Recipe {
   difficulty: string;
   secretMessage?: string;
   rating?: number;
-  memories?: string[];
+  memories?: Array<{
+    imageUrls: string[];
+  }>;
 }
 
 const container = {
@@ -291,8 +293,19 @@ export default function Recipes() {
                                 className="flex items-center text-sm text-purple-600 hover:text-purple-700"
                               >
                                 <PhotoIcon className="h-4 w-4 mr-1" />
-                                {recipe.memories.length} memória
-                                {recipe.memories.length !== 1 ? "s" : ""}
+                                {recipe.memories?.reduce(
+                                  (total, memory) =>
+                                    total + (memory.imageUrls?.length || 0),
+                                  0
+                                )}{" "}
+                                foto
+                                {recipe.memories?.reduce(
+                                  (total, memory) =>
+                                    total + (memory.imageUrls?.length || 0),
+                                  0
+                                ) !== 1
+                                  ? "s"
+                                  : ""}
                               </button>
                             )}
                         </div>

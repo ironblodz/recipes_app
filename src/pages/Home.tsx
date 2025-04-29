@@ -52,7 +52,7 @@ export default function Home() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <div ref={containerRef} className="h-screen overflow-hidden">
+    <div ref={containerRef} className="h-screen overflow-hidden relative">
       <Toaster position="top-right" />
 
       {/* Hero Section with Parallax */}
