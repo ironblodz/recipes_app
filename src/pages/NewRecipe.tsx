@@ -38,19 +38,6 @@ const preparationSubSteps = [
   "Outros",
 ];
 
-const units = [
-  "g",
-  "kg",
-  "ml",
-  "l",
-  "colher de sopa",
-  "colher de chá",
-  "xícara",
-  "pitada",
-  "unidade",
-  "a gosto",
-];
-
 interface Recipe {
   title: string;
   description: string;
