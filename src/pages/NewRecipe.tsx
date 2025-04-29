@@ -284,7 +284,7 @@ export default function NewRecipe() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-16">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-12 mt-16">
       <motion.div
         variants={container}
         initial="hidden"
@@ -567,7 +567,7 @@ export default function NewRecipe() {
                 </button>
               </div>
               <div className="mt-2 space-y-4">
-                {memories.map((memory, index) => (
+                {memories.map((_, index) => (
                   <div key={index} className="space-y-4">
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                       {memoryImagePreviews[index].map((preview, imageIndex) => (
