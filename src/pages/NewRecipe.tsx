@@ -82,7 +82,8 @@ export default function NewRecipe() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-black focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
+            placeholder="Digita o titulo da receita"
           />
         </div>
 
@@ -98,7 +99,8 @@ export default function NewRecipe() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-black focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
+            placeholder="Digita a descrição da receita"
           />
         </div>
 
@@ -114,7 +116,8 @@ export default function NewRecipe() {
             id="imageUrl"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-black focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
+            placeholder="Digita a url da imagem da receita"
           />
         </div>
 
@@ -137,7 +140,8 @@ export default function NewRecipe() {
                 type="text"
                 value={ingredient}
                 onChange={(e) => handleIngredientChange(index, e.target.value)}
-                className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="flex-1 rounded-md border-gray-300 shadow-sm text-black focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
+                placeholder="Digita o ingrediente"
               />
               <button
                 type="button"
@@ -172,7 +176,7 @@ export default function NewRecipe() {
                 value={instruction}
                 onChange={(e) => handleInstructionChange(index, e.target.value)}
                 rows={2}
-                className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="flex-1 rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
               />
               <button
                 type="button"
