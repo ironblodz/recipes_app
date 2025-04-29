@@ -40,52 +40,6 @@ const floatingAnimation2 = {
   },
 };
 
-const heartAnimation = {
-  initial: { scale: 1 },
-  animate: {
-    scale: [1, 1.2, 1],
-    transition: {
-      duration: 1.5,
-      repeat: Infinity,
-      ease: "easeInOut",
-    },
-  },
-};
-
-const complimentAnimation = {
-  initial: { opacity: 0, y: 20, scale: 0.8 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -20,
-    scale: 0.8,
-    transition: {
-      duration: 0.5,
-      ease: "easeIn",
-    },
-  },
-};
-
-const floatingComplimentAnimation = {
-  initial: { y: 0 },
-  animate: {
-    y: [0, -10, 0],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: "easeInOut",
-    },
-  },
-};
-
 export default function Home() {
   const { currentUser } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
