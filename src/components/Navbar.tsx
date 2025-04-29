@@ -63,18 +63,6 @@ export default function Navbar() {
 
         {/* Decorative gradient elements */}
         <motion.div
-          className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-full filter blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 0.8, 0.5],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
           className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tr from-blue-500/20 to-indigo-500/20 rounded-full filter blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
