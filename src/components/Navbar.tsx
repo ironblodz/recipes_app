@@ -135,7 +135,7 @@ export default function Navbar() {
                 to="/"
                 className={`relative group px-4 py-2 rounded-xl transition-all duration-300 ${
                   location.pathname === "/"
-                    ? "text-white"
+                    ? "text-pink-600"
                     : "text-gray-600 hover:text-pink-500"
                 }`}
               >
@@ -149,7 +149,9 @@ export default function Navbar() {
                 {location.pathname === "/" && (
                   <motion.div
                     layoutId="activeNavItem"
-                    className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl shadow-lg"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-pink-500"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -161,7 +163,7 @@ export default function Navbar() {
                 to="/recipes"
                 className={`relative group px-4 py-2 rounded-xl transition-all duration-300 ${
                   location.pathname === "/recipes"
-                    ? "text-white"
+                    ? "text-pink-600"
                     : "text-gray-600 hover:text-pink-500"
                 }`}
               >
@@ -175,7 +177,9 @@ export default function Navbar() {
                 {location.pathname === "/recipes" && (
                   <motion.div
                     layoutId="activeNavItem"
-                    className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl shadow-lg"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-pink-500"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -189,7 +193,7 @@ export default function Navbar() {
                     to="/profile"
                     className={`relative group px-4 py-2 rounded-xl transition-all duration-300 ${
                       location.pathname === "/profile"
-                        ? "text-white"
+                        ? "text-pink-600"
                         : "text-gray-600 hover:text-pink-500"
                     }`}
                   >
@@ -203,7 +207,9 @@ export default function Navbar() {
                     {location.pathname === "/profile" && (
                       <motion.div
                         layoutId="activeNavItem"
-                        className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl shadow-lg"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-pink-500"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
                         transition={{
                           type: "spring",
                           bounce: 0.2,
@@ -274,7 +280,7 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`block relative px-3 py-2 rounded-lg text-base font-medium ${
                   location.pathname === "/"
-                    ? "text-white"
+                    ? "text-pink-600"
                     : "text-gray-600 hover:text-pink-500"
                 }`}
               >
@@ -288,7 +294,9 @@ export default function Navbar() {
                 {location.pathname === "/" && (
                   <motion.div
                     layoutId="activeNavItemMobile"
-                    className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg shadow-lg"
+                    className="absolute left-0 top-0 bottom-0 w-1 bg-pink-500"
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -298,7 +306,7 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`block relative px-3 py-2 rounded-lg text-base font-medium ${
                   location.pathname === "/recipes"
-                    ? "text-white"
+                    ? "text-pink-600"
                     : "text-gray-600 hover:text-pink-500"
                 }`}
               >
@@ -312,7 +320,9 @@ export default function Navbar() {
                 {location.pathname === "/recipes" && (
                   <motion.div
                     layoutId="activeNavItemMobile"
-                    className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg shadow-lg"
+                    className="absolute left-0 top-0 bottom-0 w-1 bg-pink-500"
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -324,7 +334,7 @@ export default function Navbar() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`block relative px-3 py-2 rounded-lg text-base font-medium ${
                       location.pathname === "/profile"
-                        ? "text-white"
+                        ? "text-pink-600"
                         : "text-gray-600 hover:text-pink-500"
                     }`}
                   >
@@ -338,7 +348,9 @@ export default function Navbar() {
                     {location.pathname === "/profile" && (
                       <motion.div
                         layoutId="activeNavItemMobile"
-                        className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg shadow-lg"
+                        className="absolute left-0 top-0 bottom-0 w-1 bg-pink-500"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
                         transition={{
                           type: "spring",
                           bounce: 0.2,
