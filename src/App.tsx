@@ -6,6 +6,7 @@ import RecipeDetail from "./pages/RecipeDetail";
 import NewRecipe from "./pages/NewRecipe";
 import EditRecipe from "./pages/EditRecipe";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
@@ -51,6 +52,14 @@ function App() {
                     element={
                       <PrivateRoute>
                         <NewRecipe />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <PrivateRoute>
+                        <Profile />
                       </PrivateRoute>
                     }
                   />

@@ -246,7 +246,7 @@ export default function Recipes() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="text-center py-16 bg-white rounded-2xl shadow-lg"
+          className="relative text-center py-16 bg-white rounded-2xl shadow-lg"
         >
           <div className="max-w-md mx-auto">
             <h3 className="text-2xl font-semibold text-gray-900 mb-4">

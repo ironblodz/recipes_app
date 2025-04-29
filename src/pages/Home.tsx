@@ -1,14 +1,8 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion, useScroll, useTransform } from "framer-motion";
-import {
-  BookOpenIcon,
-  ArrowRightIcon,
-  SparklesIcon,
-  HeartIcon,
-} from "@heroicons/react/24/outline";
+import { BookOpenIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
-import { useInView } from "react-intersection-observer";
 import { Toaster } from "react-hot-toast";
 
 const floatingAnimation = {
@@ -47,21 +41,6 @@ const heartAnimation = {
   },
 };
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0 },
-};
-
 export default function Home() {
   const { currentUser } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,11 +51,6 @@ export default function Home() {
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
-  const [ref, inView] = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  });
 
   return (
     <div ref={containerRef} className="min-h-screen overflow-hidden">
@@ -182,69 +156,6 @@ export default function Home() {
                   </span>
                 </Link>
               )}
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Features Section */}
-      <div ref={ref} className="relative bg-white py-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-50" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate={inView ? "show" : "hidden"}
-            className="grid grid-cols-1 md:grid-cols-3 gap-12"
-          >
-            <motion.div
-              variants={item}
-              whileHover={{ scale: 1.05 }}
-              className="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300"
-            >
-              <div className="w-16 h-16 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center mb-6">
-                <BookOpenIcon className="h-8 w-8 text-indigo-600" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Organize suas receitas
-              </h3>
-              <p className="text-gray-600">
-                Mantenha todas as suas receitas favoritas organizadas em um só
-                lugar.
-              </p>
-            </motion.div>
-
-            <motion.div
-              variants={item}
-              whileHover={{ scale: 1.05 }}
-              className="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300"
-            >
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl flex items-center justify-center mb-6">
-                <SparklesIcon className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Acesso rápido
-              </h3>
-              <p className="text-gray-600">
-                Encontre suas receitas rapidamente com nossa interface
-                intuitiva.
-              </p>
-            </motion.div>
-
-            <motion.div
-              variants={item}
-              whileHover={{ scale: 1.05 }}
-              className="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300"
-            >
-              <div className="w-16 h-16 bg-gradient-to-r from-pink-100 to-indigo-100 rounded-xl flex items-center justify-center mb-6">
-                <ArrowRightIcon className="h-8 w-8 text-pink-600" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Compartilhe facilmente
-              </h3>
-              <p className="text-gray-600">
-                Compartilhe suas receitas com amigos e familiares.
-              </p>
             </motion.div>
           </motion.div>
         </div>
