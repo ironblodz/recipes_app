@@ -51,26 +51,53 @@ const units = [
   "a gosto",
 ];
 
+interface Recipe {
+  title: string;
+  description: string;
+  ingredients: Array<{
+    name: string;
+    quantity: string;
+  }>;
+  instructions: Array<{
+    step: string;
+    subStep: string;
+  }>;
+  imageUrl?: string;
+  userId: string;
+  occasion: string;
+  memories?: Array<{
+    text: string;
+    imageUrl?: string;
+  }>;
+  createdAt: any;
+}
+
 export default function NewRecipe() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ingredients, setIngredients] = useState<
-    Array<{ name: string; quantity: string; unit: string }>
-  >([{ name: "", quantity: "", unit: "g" }]);
+    Array<{ name: string; quantity: string }>
+  >([{ name: "", quantity: "" }]);
   const [instructions, setInstructions] = useState([
     { step: "", subStep: "Bolo" },
   ]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [occasion, setOccasion] = useState("Doces");
-  const [memories, setMemories] = useState([""]);
+  const [memories, setMemories] = useState<
+    Array<{ text: string; imageUrl?: string }>
+  >([{ text: "" }]);
+  const [memoryImages, setMemoryImages] = useState<Array<File | null>>([null]);
+  const [memoryImagePreviews, setMemoryImagePreviews] = useState<Array<string>>(
+    [""]
+  );
   const [loading, setLoading] = useState(false);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, { name: "", quantity: "", unit: "g" }]);
+    setIngredients([...ingredients, { name: "", quantity: "" }]);
   };
 
   const handleRemoveIngredient = (index: number) => {
@@ -101,11 +128,52 @@ export default function NewRecipe() {
   };
 
   const handleAddMemory = () => {
-    setMemories([...memories, ""]);
+    setMemories([...memories, { text: "" }]);
+    setMemoryImages([...memoryImages, null]);
+    setMemoryImagePreviews([...memoryImagePreviews, ""]);
   };
 
   const handleRemoveMemory = (index: number) => {
     const newMemories = memories.filter((_, i) => i !== index);
+    const newMemoryImages = memoryImages.filter((_, i) => i !== index);
+    const newMemoryImagePreviews = memoryImagePreviews.filter(
+      (_, i) => i !== index
+    );
+    setMemories(newMemories);
+    setMemoryImages(newMemoryImages);
+    setMemoryImagePreviews(newMemoryImagePreviews);
+  };
+
+  const handleMemoryImageChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("A imagem deve ter menos de 10MB");
+        return;
+      }
+      const newMemoryImages = [...memoryImages];
+      newMemoryImages[index] = file;
+      setMemoryImages(newMemoryImages);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newMemoryImagePreviews = [...memoryImagePreviews];
+        newMemoryImagePreviews[index] = reader.result as string;
+        setMemoryImagePreviews(newMemoryImagePreviews);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMemoryTextChange = (index: number, value: string) => {
+    const newMemories = [...memories];
+    newMemories[index] = {
+      ...newMemories[index],
+      text: value,
+    };
     setMemories(newMemories);
   };
 
@@ -169,6 +237,41 @@ export default function NewRecipe() {
         }
       }
 
+      // Upload memory images
+      const memoryImageUrls: string[] = [];
+      for (let i = 0; i < memoryImages.length; i++) {
+        const memoryImage = memoryImages[i];
+        if (memoryImage) {
+          const storageRef = ref(
+            storage,
+            `recipes/${currentUser.uid}/memories/${Date.now()}_${
+              memoryImage.name
+            }`
+          );
+          const metadata = {
+            contentType: memoryImage.type,
+            customMetadata: {
+              uploadedBy: currentUser.uid,
+            },
+          };
+
+          try {
+            const snapshot = await uploadBytes(
+              storageRef,
+              memoryImage,
+              metadata
+            );
+            const url = await getDownloadURL(snapshot.ref);
+            memoryImageUrls[i] = url;
+          } catch (error) {
+            console.error("Error uploading memory image:", error);
+            toast.error("Erro ao fazer upload da imagem da memória");
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
       const recipeData = {
         title,
         description,
@@ -179,7 +282,10 @@ export default function NewRecipe() {
         })),
         imageUrl,
         occasion,
-        memories: memories.filter(Boolean),
+        memories: memories.map((memory, index) => ({
+          text: memory.text,
+          imageUrl: memoryImageUrls[index],
+        })),
         userId: currentUser.uid,
         createdAt: serverTimestamp(),
       };
@@ -187,7 +293,7 @@ export default function NewRecipe() {
       await addDoc(collection(db, "recipes"), recipeData);
       toast.success("Receita criada com sucesso!");
       navigate("/recipes");
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Error creating recipe:", error);
       toast.error("Erro ao criar receita");
     } finally {
@@ -478,27 +584,90 @@ export default function NewRecipe() {
                   + Adicionar Memória
                 </button>
               </div>
-              <div className="mt-2 space-y-2">
+              <div className="mt-2 space-y-4">
                 {memories.map((memory, index) => (
-                  <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={memory}
-                      onChange={(e) => {
-                        const newMemories = [...memories];
-                        newMemories[index] = e.target.value;
-                        setMemories(newMemories);
-                      }}
-                      className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                      placeholder={`Memória ${index + 1}`}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveMemory(index)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      ×
-                    </button>
+                  <div key={index} className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={memory.text}
+                          onChange={(e) =>
+                            handleMemoryTextChange(index, e.target.value)
+                          }
+                          className="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                          placeholder={`Memória ${index + 1}`}
+                        />
+                      </div>
+                      <div className="w-full sm:w-48">
+                        <div className="mt-1 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-4">
+                          <div className="text-center">
+                            {memoryImagePreviews[index] ? (
+                              <div className="relative">
+                                <img
+                                  src={memoryImagePreviews[index]}
+                                  alt="Preview"
+                                  className="mx-auto h-24 w-24 object-cover rounded-lg"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newMemoryImagePreviews = [
+                                      ...memoryImagePreviews,
+                                    ];
+                                    newMemoryImagePreviews[index] = "";
+                                    setMemoryImagePreviews(
+                                      newMemoryImagePreviews
+                                    );
+                                    const newMemoryImages = [...memoryImages];
+                                    newMemoryImages[index] = null;
+                                    setMemoryImages(newMemoryImages);
+                                  }}
+                                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ) : (
+                              <PhotoIcon
+                                className="mx-auto h-8 w-8 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            )}
+                            <div className="mt-2 flex text-sm text-gray-600">
+                              <label
+                                htmlFor={`memory-image-${index}`}
+                                className="relative cursor-pointer rounded-md bg-white font-medium text-pink-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-pink-500 focus-within:ring-offset-2 hover:text-pink-500"
+                              >
+                                <span>Carregar imagem</span>
+                                <input
+                                  id={`memory-image-${index}`}
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) =>
+                                    handleMemoryImageChange(index, e)
+                                  }
+                                  className="sr-only"
+                                />
+                              </label>
+                              <p className="pl-1">ou arraste e solte</p>
+                            </div>
+                            <p className="text-xs text-gray-500">
+                              PNG, JPG, GIF até 10MB
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveMemory(index)}
+                        className="p-2 text-red-600 hover:text-red-800"
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
