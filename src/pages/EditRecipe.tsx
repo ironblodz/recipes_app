@@ -10,7 +10,7 @@ import {
 import { db, storage } from "../firebase/config";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
-import { PhotoIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { PhotoIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 
 const container = {
