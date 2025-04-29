@@ -2,53 +2,84 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
-import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import {
+  EnvelopeIcon,
+  LockClosedIcon,
+  ArrowRightIcon,
+} from "@heroicons/react/24/outline";
+import toast from "react-hot-toast";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await login(email, password);
+      toast.success("Login realizado com sucesso!");
       navigate("/recipes");
     } catch (error: unknown) {
       console.error("Login error:", error);
       setError("Falha ao fazer login. Verifique suas credenciais.");
+      toast.error("Falha ao fazer login. Verifique suas credenciais.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl"
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="max-w-md w-full space-y-8"
       >
-        <div>
+        <motion.div variants={item} className="text-center">
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-center text-3xl font-extrabold text-gray-900"
+            className="text-4xl font-extrabold text-gray-900 mb-2"
           >
-            Receitas da Maria
+            Receitas da Joana
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-2 text-center text-sm text-gray-600"
+            className="text-gray-600"
           >
             Faça login para acessar suas receitas
           </motion.p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        </motion.div>
+
+        <motion.form
+          variants={item}
+          className="mt-8 space-y-6"
+          onSubmit={handleSubmit}
+        >
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -59,7 +90,11 @@ export default function Login() {
               <span className="block sm:inline">{error}</span>
             </motion.div>
           )}
-          <div className="rounded-md shadow-sm space-y-4">
+
+          <motion.div
+            variants={item}
+            className="rounded-md shadow-sm space-y-4"
+          >
             <div>
               <label htmlFor="email-address" className="sr-only">
                 Email
@@ -74,13 +109,14 @@ export default function Login() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm transition-all duration-300"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
+
             <div>
               <label htmlFor="password" className="sr-only">
                 Senha
@@ -95,28 +131,36 @@ export default function Login() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm transition-all duration-300"
                   placeholder="Senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-          >
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              Entrar
-            </button>
           </motion.div>
-        </form>
+
+          <motion.div variants={item}>
+            <motion.button
+              type="submit"
+              disabled={isLoading}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform translate-x-0 -skew-x-12 group-hover:translate-x-full group-hover:skew-x-12 bg-gradient-to-r from-purple-600 to-indigo-600"></span>
+              <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full skew-x-12 group-hover:translate-x-0 group-hover:skew-x-12 bg-gradient-to-r from-indigo-600 to-purple-600"></span>
+              <span className="relative flex items-center justify-center">
+                {isLoading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                ) : (
+                  <ArrowRightIcon className="h-5 w-5 mr-2" />
+                )}
+                {isLoading ? "Entrando..." : "Entrar"}
+              </span>
+            </motion.button>
+          </motion.div>
+        </motion.form>
       </motion.div>
     </div>
   );
