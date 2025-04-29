@@ -387,7 +387,7 @@ export default function EditRecipe() {
   }
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 py-12">
+    <div className="w-full px-0 sm:px-6 lg:px-8 py-12">
       <motion.div
         variants={container}
         initial="hidden"

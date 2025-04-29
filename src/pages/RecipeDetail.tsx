@@ -110,7 +110,7 @@ export default function RecipeDetail() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+      className="max-w-4xl mx-auto px-0 sm:px-6 lg:px-8 py-12"
     >
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
         {recipe.imageUrl && (

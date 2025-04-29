@@ -18,7 +18,7 @@ function App() {
         <div className="min-h-screen bg-background">
           <Navbar />
           <div className="flex min-h-[calc(100vh-4rem)]">
-            <main className="flex-1 w-full">
+            <main className="flex-1 w-full px-0 sm:px-6 lg:px-8">
               <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Home />} />

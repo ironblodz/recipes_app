@@ -141,7 +141,7 @@ export default function Profile() {
       variants={container}
       initial="hidden"
       animate="show"
-      className="max-w-4xl mx-auto px-4 py-8 mt-16"
+      className="max-w-4xl mx-auto px-0 sm:px-6 lg:px-8 py-8 mt-16"
     >
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
         {/* Profile Header */}

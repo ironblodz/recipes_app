@@ -145,7 +145,7 @@ export default function Login() {
       </motion.div>
 
       {/* Right side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:p-12">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-0 sm:p-4 lg:p-12">
         <motion.div
           variants={container}
           initial="hidden"
