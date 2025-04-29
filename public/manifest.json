@@ -6,9 +6,10 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4f46e5",
+  "version": "1.0.0",
   "icons": [
     {
-      "src": "/vite.svg",
+      "src": "/vite.svg?v=1.0.0",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
