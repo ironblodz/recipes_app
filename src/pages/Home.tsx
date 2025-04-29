@@ -5,6 +5,7 @@ import {
   BookOpenIcon,
   ArrowRightIcon,
   SparklesIcon,
+  HeartIcon,
 } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import { useInView } from "react-intersection-observer";
@@ -26,6 +27,18 @@ const floatingAnimation2 = {
   initial: { y: 0 },
   animate: {
     y: [0, 10, 0],
+    transition: {
+      duration: 1.5,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const heartAnimation = {
+  initial: { scale: 1 },
+  animate: {
+    scale: [1, 1.2, 1],
     transition: {
       duration: 1.5,
       repeat: Infinity,
@@ -72,20 +85,20 @@ export default function Home() {
       {/* Hero Section with Parallax */}
       <motion.div
         style={{ y, opacity }}
-        className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-purple-900 to-pink-900"
+        className="absolute inset-0 bg-gradient-to-b from-pink-100 via-purple-100 to-indigo-100"
       >
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
         <motion.div
           variants={floatingAnimation}
           initial="initial"
           animate="animate"
-          className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70"
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-pink-200 to-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70"
         />
         <motion.div
           variants={floatingAnimation2}
           initial="initial"
           animate="animate"
-          className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70"
+          className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-gradient-to-r from-indigo-200 to-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70"
         />
       </motion.div>
 
@@ -98,11 +111,33 @@ export default function Home() {
             transition={{ duration: 0.3 }}
             className="space-y-8"
           >
+            {/* Joana's Image Section */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative mx-auto w-64 h-64 rounded-full overflow-hidden border-4 border-white shadow-2xl"
+            >
+              <img
+                src="/joana.jpg"
+                alt="Joana"
+                className="w-full h-full object-cover"
+              />
+              <motion.div
+                variants={heartAnimation}
+                initial="initial"
+                animate="animate"
+                className="absolute -top-4 -right-4 bg-white rounded-full p-2 shadow-lg"
+              >
+                <HeartIcon className="h-8 w-8 text-pink-500" />
+              </motion.div>
+            </motion.div>
+
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.05 }}
-              className="text-6xl md:text-8xl font-bold text-white mb-6"
+              className="text-6xl md:text-8xl font-bold text-gray-900 mb-6"
             >
               Receitas da Joana
             </motion.h1>
@@ -111,7 +146,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
-              className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto"
+              className="text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto"
             >
               A tua aplicação privada de receitas favoritas ❤️
             </motion.p>
@@ -125,10 +160,10 @@ export default function Home() {
               {!currentUser ? (
                 <Link
                   to="/login"
-                  className="group relative px-8 py-4 text-lg font-medium rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  className="group relative px-8 py-4 text-lg font-medium rounded-xl text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
                 >
-                  <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform translate-x-0 -skew-x-12 group-hover:translate-x-full group-hover:skew-x-12 bg-gradient-to-r from-purple-600 to-indigo-600"></span>
-                  <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full skew-x-12 group-hover:translate-x-0 group-hover:skew-x-12 bg-gradient-to-r from-indigo-600 to-purple-600"></span>
+                  <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform translate-x-0 -skew-x-12 group-hover:translate-x-full group-hover:skew-x-12 bg-gradient-to-r from-purple-500 to-pink-500"></span>
+                  <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full skew-x-12 group-hover:translate-x-0 group-hover:skew-x-12 bg-gradient-to-r from-pink-500 to-purple-500"></span>
                   <span className="relative flex items-center justify-center">
                     <BookOpenIcon className="h-6 w-6 mr-3" />
                     Entrar para ver suas receitas
@@ -137,10 +172,10 @@ export default function Home() {
               ) : (
                 <Link
                   to="/recipes"
-                  className="group relative px-8 py-4 text-lg font-medium rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  className="group relative px-8 py-4 text-lg font-medium rounded-xl text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
                 >
-                  <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform translate-x-0 -skew-x-12 group-hover:translate-x-full group-hover:skew-x-12 bg-gradient-to-r from-purple-600 to-indigo-600"></span>
-                  <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full skew-x-12 group-hover:translate-x-0 group-hover:skew-x-12 bg-gradient-to-r from-indigo-600 to-purple-600"></span>
+                  <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform translate-x-0 -skew-x-12 group-hover:translate-x-full group-hover:skew-x-12 bg-gradient-to-r from-purple-500 to-pink-500"></span>
+                  <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full skew-x-12 group-hover:translate-x-0 group-hover:skew-x-12 bg-gradient-to-r from-pink-500 to-purple-500"></span>
                   <span className="relative flex items-center justify-center">
                     <BookOpenIcon className="h-6 w-6 mr-3" />
                     Ver minhas receitas
