@@ -16,6 +16,7 @@
     "@react-spring/web": "^9.7.5",
     "@tailwindcss/vite": "^4.1.4",
     "@tsparticles/react": "^3.0.0",
+    "@vercel/speed-insights": "^1.2.0",
     "firebase": "^11.6.1",
     "framer-motion": "^12.9.2",
     "helmet": "^7.1.0",
