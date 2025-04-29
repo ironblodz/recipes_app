@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Recipes from "./pages/Recipes";
 import RecipeDetail from "./pages/RecipeDetail";
 import NewRecipe from "./pages/NewRecipe";
+import EditRecipe from "./pages/EditRecipe";
 import Login from "./pages/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import Navbar from "./components/Navbar";
@@ -34,6 +35,14 @@ function App() {
                     element={
                       <PrivateRoute>
                         <RecipeDetail />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/recipes/:id/edit"
+                    element={
+                      <PrivateRoute>
+                        <EditRecipe />
                       </PrivateRoute>
                     }
                   />
