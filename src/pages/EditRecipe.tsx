@@ -28,14 +28,7 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-const occasions = [
-  "Dia a Dia",
-  "Aniversário",
-  "Dia dos Namorados",
-  "Data Especial",
-  "Surpresa",
-  "Outra",
-];
+const occasions = ["Doces", "Salgados"];
 
 const difficulties = ["Fácil", "Médio", "Difícil"];
 
@@ -85,7 +78,6 @@ interface Recipe {
   difficulty: string;
   preparationTime: string;
   secretMessage?: string;
-  rating?: number;
   memories?: string[];
 }
 
@@ -101,11 +93,10 @@ export default function EditRecipe() {
   >([{ step: "", subStep: "Bolo" }]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
-  const [occasion, setOccasion] = useState("Dia a Dia");
+  const [occasion, setOccasion] = useState("Doces");
   const [difficulty, setDifficulty] = useState("");
   const [preparationTime, setPreparationTime] = useState("");
   const [secretMessage, setSecretMessage] = useState("");
-  const [rating, setRating] = useState(0);
   const [memories, setMemories] = useState([""]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams<{ id: string }>();
@@ -135,7 +126,6 @@ export default function EditRecipe() {
         setDifficulty(recipeData.difficulty);
         setPreparationTime(recipeData.preparationTime);
         setSecretMessage(recipeData.secretMessage || "");
-        setRating(recipeData.rating || 0);
         setMemories(recipeData.memories || [""]);
       }
     }
@@ -265,7 +255,6 @@ export default function EditRecipe() {
         difficulty,
         preparationTime,
         secretMessage,
-        rating,
         memories: memories.filter(Boolean),
         userId: currentUser.uid,
       };
@@ -658,24 +647,6 @@ export default function EditRecipe() {
                 </div>
               </div>
             )}
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Avaliação
-              </label>
-              <div className="mt-2 flex items-center space-x-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setRating(star)}
-                    className="text-2xl"
-                  >
-                    {star <= rating ? "★" : "☆"}
-                  </button>
-                ))}
-              </div>
-            </div>
           </motion.div>
 
           <motion.div variants={item} className="flex justify-end space-x-4">

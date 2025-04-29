@@ -65,11 +65,10 @@ export default function NewRecipe() {
   ]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
-  const [occasion, setOccasion] = useState("Dia a Dia");
+  const [occasion, setOccasion] = useState("Doces");
   const [difficulty, setDifficulty] = useState("");
   const [preparationTime, setPreparationTime] = useState("");
   const [secretMessage, setSecretMessage] = useState("");
-  const [rating, setRating] = useState(0);
   const [memories, setMemories] = useState([""]);
   const [loading, setLoading] = useState(false);
   const { currentUser } = useAuth();
@@ -179,11 +178,7 @@ export default function NewRecipe() {
       const recipeData = {
         title,
         description,
-        ingredients: ingredients.map((ingredient) => ({
-          name: ingredient.name,
-          quantity: ingredient.quantity,
-          unit: ingredient.unit,
-        })),
+        ingredients: ingredients.filter(Boolean),
         instructions: instructions.map((instruction) => ({
           step: instruction.step,
           subStep: instruction.subStep,
@@ -193,7 +188,6 @@ export default function NewRecipe() {
         difficulty,
         preparationTime,
         secretMessage,
-        rating,
         memories: memories.filter(Boolean),
         userId: currentUser.uid,
         createdAt: serverTimestamp(),
@@ -580,24 +574,6 @@ export default function NewRecipe() {
                 </div>
               </div>
             )}
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Avaliação
-              </label>
-              <div className="mt-2 flex items-center space-x-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setRating(star)}
-                    className="text-2xl"
-                  >
-                    {star <= rating ? "★" : "☆"}
-                  </button>
-                ))}
-              </div>
-            </div>
           </motion.div>
 
           <motion.div variants={item} className="flex justify-end space-x-4">

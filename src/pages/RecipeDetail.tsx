@@ -28,10 +28,7 @@ interface Recipe {
   imageUrl?: string;
   userId: string;
   occasion: string;
-  difficulty: string;
-  preparationTime: string;
   secretMessage?: string;
-  rating?: number;
   memories?: string[];
 }
 
@@ -140,12 +137,6 @@ export default function RecipeDetail() {
                     {recipe.occasion}
                   </span>
                 )}
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                  {recipe.difficulty}
-                </span>
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  {recipe.preparationTime}
-                </span>
               </div>
             </motion.div>
             {isOwner && (
@@ -194,23 +185,6 @@ export default function RecipeDetail() {
                 <span className="font-medium">Mensagem Especial</span>
               </div>
               <p className="mt-2 text-pink-800">{recipe.secretMessage}</p>
-            </motion.div>
-          )}
-
-          {recipe.rating && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="mb-8"
-            >
-              <div className="flex items-center text-yellow-500">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className="text-2xl">
-                    {i < (recipe.rating || 0) ? "★" : "☆"}
-                  </span>
-                ))}
-              </div>
             </motion.div>
           )}
 

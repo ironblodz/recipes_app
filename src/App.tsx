@@ -19,7 +19,7 @@ function App() {
           <Navbar />
           <div className="flex min-h-[calc(100vh-4rem)]">
             <main className="flex-1">
-              <div className="container py-8">
+              <div className="container">
                 <Routes>
                   <Route path="/login" element={<Login />} />
                   <Route path="/" element={<Home />} />
