@@ -139,108 +139,102 @@ export default function Recipes() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow mt-16">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl font-bold text-gray-900"
-          >
-            As Nossas Receitas
-          </motion.h1>
-          <Link
-            to="/new-recipe"
-            className="group relative inline-flex px-6 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
-          >
-            <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform translate-x-0 -skew-x-12 group-hover:translate-x-full group-hover:skew-x-12 bg-gradient-to-r from-purple-600 to-pink-600 z-0"></span>
-            <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full skew-x-12 group-hover:translate-x-0 group-hover:skew-x-12 bg-gradient-to-r from-pink-600 to-purple-600 z-0"></span>
-            <span className="relative flex items-center justify-center z-10">
-              <PlusIcon className="h-5 w-5 mr-2" />
-              Nova Receita
-            </span>
-          </Link>
-        </div>
-
-        <div className="mb-8 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Pesquisar receitas..."
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
-              />
-            </div>
-            <select
-              value={selectedOccasion}
-              onChange={(e) => setSelectedOccasion(e.target.value)}
-              className="px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+      <div className="w-full px-4 py-6 flex-grow mt-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col gap-6 mb-8">
+            <motion.h1
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-3xl font-bold text-gray-900"
             >
-              {occasions.map((occasion) => (
-                <option key={occasion} value={occasion}>
-                  {occasion}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+              As Nossas Receitas
+            </motion.h1>
 
-        {filteredRecipes.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="relative text-center py-16 bg-white rounded-2xl shadow-lg"
-          >
-            <div className="max-w-md mx-auto">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                {searchQuery || selectedOccasion !== "Todas"
-                  ? "Nenhuma receita encontrada"
-                  : "Ainda não tem receitas"}
-              </h3>
-              <p className="text-gray-600 mb-8">
-                {searchQuery || selectedOccasion !== "Todas"
-                  ? "Tente ajustar a sua pesquisa"
-                  : "Comece por criar a sua primeira receita!"}
-              </p>
-              <Link
-                to="/new-recipe"
-                className="group relative inline-flex px-6 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+            <Link to="/new-recipe" className="w-full">
+              <button className="flex items-center justify-center w-full px-4 py-3 text-base font-medium rounded-lg text-white bg-pink-600 hover:bg-pink-700">
+                <PlusIcon className="h-5 w-5 mr-2" />
+                Nova Receita
+              </button>
+            </Link>
+
+            <div className="flex flex-col gap-4">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Pesquisar receitas..."
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                />
+              </div>
+
+              <select
+                value={selectedOccasion}
+                onChange={(e) => setSelectedOccasion(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               >
-                <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform translate-x-0 -skew-x-12 group-hover:translate-x-full group-hover:skew-x-12 bg-gradient-to-r from-purple-600 to-pink-600 z-0"></span>
-                <span className="absolute inset-0 w-full h-full transition duration-300 ease-out transform -translate-x-full skew-x-12 group-hover:translate-x-0 group-hover:skew-x-12 bg-gradient-to-r from-pink-600 to-purple-600 z-0"></span>
-                <span className="relative flex items-center justify-center z-10">
-                  <PlusIcon className="h-5 w-5 mr-2" />
-                  Criar a primeira receita
-                </span>
-              </Link>
+                {occasions.map((occasion) => (
+                  <option key={occasion} value={occasion}>
+                    {occasion}
+                  </option>
+                ))}
+              </select>
             </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            ref={ref}
-            variants={container}
-            initial="hidden"
-            animate={inView ? "show" : "hidden"}
-            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            <AnimatePresence>
-              {filteredRecipes.map((recipe) => (
-                <motion.div
-                  key={recipe.id}
-                  variants={item}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.2 }}
+          </div>
+
+          {filteredRecipes.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="relative text-center py-12 bg-white rounded-2xl shadow-sm"
+            >
+              <div className="max-w-md mx-auto px-4">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  {searchQuery || selectedOccasion !== "Todas"
+                    ? "Nenhuma receita encontrada"
+                    : "Ainda não tem receitas"}
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {searchQuery || selectedOccasion !== "Todas"
+                    ? "Tente ajustar a sua pesquisa"
+                    : "Comece por criar a sua primeira receita!"}
+                </p>
+                <Link
+                  to="/new-recipe"
+                  className="block w-full text-center px-4 py-3 text-base font-medium rounded-lg text-white bg-pink-600 hover:bg-pink-700"
                 >
-                  <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-                    <Link to={`/recipes/${recipe.id}`} className="block flex-1">
+                  <div className="flex items-center justify-center">
+                    <PlusIcon className="h-5 w-5 mr-2" />
+                    Criar a primeira receita
+                  </div>
+                </Link>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              ref={ref}
+              variants={container}
+              initial="hidden"
+              animate={inView ? "show" : "hidden"}
+              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              <AnimatePresence>
+                {filteredRecipes.map((recipe) => (
+                  <motion.div
+                    key={recipe.id}
+                    variants={item}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.2 }}
+                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                  >
+                    <Link to={`/recipes/${recipe.id}`} className="block">
                       <div className="relative h-48 overflow-hidden">
                         {recipe.imageUrl ? (
                           <motion.img
@@ -258,9 +252,9 @@ export default function Recipes() {
                           </div>
                         )}
                       </div>
-                      <div className="p-6 flex-1 flex flex-col">
+                      <div className="p-4">
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-xl font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold text-gray-900">
                             {recipe.title}
                           </h3>
                           {recipe.occasion !== "Dia a Dia" && (
@@ -272,7 +266,7 @@ export default function Recipes() {
                         <p className="text-gray-600 line-clamp-2 mb-4">
                           {recipe.description}
                         </p>
-                        <div className="mt-auto space-y-2">
+                        <div className="space-y-2">
                           {recipe.occasion !== "Dia a Dia" &&
                             recipe.secretMessage && (
                               <div className="flex items-center text-sm text-pink-600">
@@ -307,37 +301,18 @@ export default function Recipes() {
                     <div className="p-4 border-t border-gray-100">
                       <button
                         onClick={() => handleDelete(recipe.id)}
-                        className="flex items-center justify-center w-full py-2 text-red-600 hover:text-red-700 transition-colors duration-300"
+                        className="flex items-center justify-center w-full py-2 text-red-600 hover:text-red-700"
                       >
                         <TrashIcon className="h-5 w-5 mr-2" />
                         Excluir
                       </button>
                     </div>
-                  </div>
-                  {showMemories === recipe.id && recipe.memories && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="mt-2 bg-pink-50 rounded-lg p-4"
-                    >
-                      <h4 className="text-sm font-medium text-pink-800 mb-2">
-                        Memórias Especiais
-                      </h4>
-                      <div className="space-y-2">
-                        {recipe.memories.map((memory, index) => (
-                          <p key={index} className="text-sm text-pink-600">
-                            {memory}
-                          </p>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </div>
       </div>
       <Footer />
     </div>
