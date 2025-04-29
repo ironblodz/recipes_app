@@ -46,6 +46,7 @@ interface Recipe {
   ingredients: Array<{
     name: string;
     quantity: string;
+    unit: string;
   }>;
   instructions: Array<{
     step: string;
@@ -54,6 +55,7 @@ interface Recipe {
   imageUrl?: string;
   userId: string;
   occasion: string;
+  secretMessage?: string;
   memories?: Array<{
     imageUrls: string[];
   }>;
@@ -64,8 +66,8 @@ export default function EditRecipe() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ingredients, setIngredients] = useState<
-    Array<{ name: string; quantity: string; subStep: string }>
-  >([{ name: "", quantity: "", subStep: "Bolo" }]);
+    Array<{ name: string; quantity: string; unit: string }>
+  >([{ name: "", quantity: "", unit: "" }]);
   const [instructions, setInstructions] = useState<
     Array<{ step: string; subStep: string }>
   >([{ step: "", subStep: "Bolo" }]);
@@ -100,12 +102,7 @@ export default function EditRecipe() {
         setRecipe(recipeData);
         setTitle(recipeData.title);
         setDescription(recipeData.description);
-        setIngredients(
-          recipeData.ingredients.map((i) => ({
-            ...i,
-            subStep: i.subStep || "Bolo",
-          }))
-        );
+        setIngredients(recipeData.ingredients);
         setInstructions(recipeData.instructions);
         setImagePreview(recipeData.imageUrl || "");
         setOccasion(recipeData.occasion);
@@ -121,10 +118,7 @@ export default function EditRecipe() {
   }, [id]);
 
   const handleAddIngredient = () => {
-    setIngredients([
-      ...ingredients,
-      { name: "", quantity: "", subStep: "Bolo" },
-    ]);
+    setIngredients([...ingredients, { name: "", quantity: "", unit: "" }]);
   };
 
   const handleRemoveIngredient = (index: number) => {
@@ -353,7 +347,7 @@ export default function EditRecipe() {
         ingredients: ingredients.filter(Boolean).map((i) => ({
           name: i.name,
           quantity: i.quantity,
-          subStep: i.subStep,
+          unit: i.unit,
         })),
         instructions: instructions.map((instruction) => ({
           step: instruction.step,
@@ -565,23 +559,20 @@ export default function EditRecipe() {
                         />
                       </div>
                       <div className="w-full sm:w-48">
-                        <select
-                          value={ingredient.subStep}
+                        <input
+                          type="text"
+                          value={ingredient.unit}
                           onChange={(e) =>
                             handleIngredientChange(
                               index,
-                              "subStep",
+                              "unit",
                               e.target.value
                             )
                           }
+                          required
                           className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
-                        >
-                          {preparationSubSteps.map((subStep) => (
-                            <option key={subStep} value={subStep}>
-                              {subStep}
-                            </option>
-                          ))}
-                        </select>
+                          placeholder="Unidade (ex: g, ml, colher de sopa)"
+                        />
                       </div>
                     </div>
                     <div className="flex justify-between items-center">
@@ -697,7 +688,7 @@ export default function EditRecipe() {
                             <img
                               src={preview}
                               alt={`Preview ${imageIndex + 1}`}
-                              className="w-full h-32 object-cover rounded-lg"
+                              className="h-20 w-20 object-cover rounded-lg"
                             />
                             <button
                               type="button"
@@ -711,44 +702,22 @@ export default function EditRecipe() {
                           </div>
                         )
                       )}
-                      <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4">
-                        <div className="text-center">
-                          <PhotoIcon
-                            className="mx-auto h-8 w-8 text-gray-400"
-                            aria-hidden="true"
-                          />
-                          <div className="mt-2 flex text-sm text-gray-600">
-                            <label
-                              htmlFor={`memory-image-${index}`}
-                              className="relative cursor-pointer rounded-md bg-white font-medium text-pink-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-pink-500 focus-within:ring-offset-2 hover:text-pink-500"
-                            >
-                              <span>Adicionar fotos</span>
-                              <input
-                                id={`memory-image-${index}`}
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                onChange={(e) =>
-                                  handleMemoryImageChange(index, e)
-                                }
-                                className="sr-only"
-                              />
-                            </label>
-                          </div>
-                          <p className="text-xs text-gray-500">
-                            PNG, JPG, GIF até 10MB
-                          </p>
-                        </div>
-                      </div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveMemory(index)}
-                        className="p-2 text-red-600 hover:text-red-800"
+                    <div className="mt-2 space-y-2">
+                      <label
+                        htmlFor={`memoryImage${index}`}
+                        className="block text-sm font-medium text-gray-700"
                       >
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
+                        Adicionar Imagens
+                      </label>
+                      <input
+                        id={`memoryImage${index}`}
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={(e) => handleMemoryImageChange(index, e)}
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-pink-500 focus:ring-pink-500"
+                      />
                     </div>
                   </div>
                 ))}
@@ -756,20 +725,13 @@ export default function EditRecipe() {
             </div>
           </motion.div>
 
-          <motion.div variants={item} className="flex justify-end space-x-4">
-            <button
-              type="button"
-              onClick={() => navigate(`/recipes/${id}`)}
-              className="px-6 py-3 text-base font-medium rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors duration-300"
-            >
-              Cancelar
-            </button>
+          <motion.div variants={item} className="space-y-6">
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 text-base font-medium rounded-lg text-white bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-lg bg-pink-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
             >
-              {loading ? "A guardar..." : "Guardar Alterações"}
+              {loading ? "Atualizando..." : "Atualizar Receita"}
             </button>
           </motion.div>
         </form>
