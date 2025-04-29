@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useAuth } from "../contexts/AuthContext";
+import { motion } from "framer-motion";
+import { PlusIcon, XMarkIcon, PhotoIcon } from "@heroicons/react/24/outline";
+import toast from "react-hot-toast";
 
 export default function NewRecipe() {
   const [title, setTitle] = useState("");
@@ -14,35 +17,35 @@ export default function NewRecipe() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  function handleAddIngredient() {
+  const handleAddIngredient = () => {
     setIngredients([...ingredients, ""]);
-  }
+  };
 
-  function handleRemoveIngredient(index: number) {
+  const handleRemoveIngredient = (index: number) => {
     setIngredients(ingredients.filter((_, i) => i !== index));
-  }
+  };
 
-  function handleIngredientChange(index: number, value: string) {
+  const handleIngredientChange = (index: number, value: string) => {
     const newIngredients = [...ingredients];
     newIngredients[index] = value;
     setIngredients(newIngredients);
-  }
+  };
 
-  function handleAddInstruction() {
+  const handleAddInstruction = () => {
     setInstructions([...instructions, ""]);
-  }
+  };
 
-  function handleRemoveInstruction(index: number) {
+  const handleRemoveInstruction = (index: number) => {
     setInstructions(instructions.filter((_, i) => i !== index));
-  }
+  };
 
-  function handleInstructionChange(index: number, value: string) {
+  const handleInstructionChange = (index: number, value: string) => {
     const newInstructions = [...instructions];
     newInstructions[index] = value;
     setInstructions(newInstructions);
-  }
+  };
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) return;
 
@@ -57,148 +60,215 @@ export default function NewRecipe() {
         userId: currentUser.uid,
         createdAt: new Date(),
       });
+      toast.success("Receita criada com sucesso!");
       navigate("/recipes");
-    } catch (error) {
-      console.error("Error adding recipe:", error);
+    } catch (error: unknown) {
+      console.error("Error creating recipe:", error);
+      toast.error("Erro ao criar receita");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Nova Receita</h1>
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+    >
+      <div className="bg-white rounded-2xl shadow-xl p-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Nova Receita</h1>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Título
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-black focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
-            placeholder="Digita o titulo da receita"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Descrição
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={3}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-black focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
-            placeholder="Digita a descrição da receita"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="imageUrl"
-            className="block text-sm font-medium text-gray-700"
-          >
-            URL da Imagem (opcional)
-          </label>
-          <input
-            type="url"
-            id="imageUrl"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-black focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
-            placeholder="Digita a url da imagem da receita"
-          />
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Ingredientes
-            </label>
-            <button
-              type="button"
-              onClick={handleAddIngredient}
-              className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Adicionar Ingrediente
-            </button>
-          </div>
-          {ingredients.map((ingredient, index) => (
-            <div key={index} className="flex items-center space-x-4 mb-2">
+              Título
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+              placeholder="Digite o título da receita"
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Descrição
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+              placeholder="Digite a descrição da receita"
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <label
+              htmlFor="imageUrl"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              URL da Imagem (opcional)
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <PhotoIcon className="h-5 w-5 text-gray-400" />
+              </div>
               <input
-                type="text"
-                value={ingredient}
-                onChange={(e) => handleIngredientChange(index, e.target.value)}
-                className="flex-1 rounded-md border-gray-300 shadow-sm text-black focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
-                placeholder="Digita o ingrediente"
+                type="url"
+                id="imageUrl"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                placeholder="https://exemplo.com/imagem.jpg"
               />
-              <button
-                type="button"
-                onClick={() => handleRemoveIngredient(index)}
-                className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
-              >
-                Remover
-              </button>
             </div>
-          ))}
-        </div>
+          </motion.div>
 
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Modo de Preparo
-            </label>
-            <button
-              type="button"
-              onClick={handleAddInstruction}
-              className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-            >
-              Adicionar Passo
-            </button>
-          </div>
-          {instructions.map((instruction, index) => (
-            <div key={index} className="flex items-start space-x-4 mb-4">
-              <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-800 text-sm font-medium">
-                {index + 1}
-              </span>
-              <textarea
-                value={instruction}
-                onChange={(e) => handleInstructionChange(index, e.target.value)}
-                rows={2}
-                className="flex-1 rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder:text-gray-400"
-              />
-              <button
-                type="button"
-                onClick={() => handleRemoveInstruction(index)}
-                className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
-              >
-                Remover
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="space-y-4"
           >
-            {loading ? "Salvando..." : "Salvar Receita"}
-          </button>
-        </div>
-      </form>
-    </div>
+            <div className="flex justify-between items-center">
+              <label className="block text-sm font-medium text-gray-700">
+                Ingredientes
+              </label>
+              <button
+                type="button"
+                onClick={handleAddIngredient}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm hover:shadow transition-all duration-300"
+              >
+                <PlusIcon className="h-5 w-5 mr-2" />
+                Adicionar Ingrediente
+              </button>
+            </div>
+            <div className="space-y-4">
+              {ingredients.map((ingredient, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  className="flex items-center space-x-4"
+                >
+                  <input
+                    type="text"
+                    value={ingredient}
+                    onChange={(e) =>
+                      handleIngredientChange(index, e.target.value)
+                    }
+                    className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                    placeholder={`Ingrediente ${index + 1}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveIngredient(index)}
+                    className="p-2 text-red-600 hover:text-red-700 transition-colors duration-300"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="space-y-4"
+          >
+            <div className="flex justify-between items-center">
+              <label className="block text-sm font-medium text-gray-700">
+                Modo de Preparo
+              </label>
+              <button
+                type="button"
+                onClick={handleAddInstruction}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm hover:shadow transition-all duration-300"
+              >
+                <PlusIcon className="h-5 w-5 mr-2" />
+                Adicionar Passo
+              </button>
+            </div>
+            <div className="space-y-4">
+              {instructions.map((instruction, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  className="flex items-start space-x-4"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 font-medium">
+                    {index + 1}
+                  </div>
+                  <textarea
+                    value={instruction}
+                    onChange={(e) =>
+                      handleInstructionChange(index, e.target.value)
+                    }
+                    rows={2}
+                    className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                    placeholder={`Passo ${index + 1}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveInstruction(index)}
+                    className="p-2 text-red-600 hover:text-red-700 transition-colors duration-300"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="flex justify-end"
+          >
+            <button
+              type="submit"
+              disabled={loading}
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              ) : null}
+              {loading ? "Salvando..." : "Salvar Receita"}
+            </button>
+          </motion.div>
+        </form>
+      </div>
+    </motion.div>
   );
 }

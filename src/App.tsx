@@ -7,43 +7,49 @@ import NewRecipe from "./pages/NewRecipe";
 import Login from "./pages/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import Navbar from "./components/Navbar";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background">
           <Navbar />
-          <main className="container mx-auto px-4 py-8">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Home />} />
-              <Route
-                path="/recipes"
-                element={
-                  <PrivateRoute>
-                    <Recipes />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/recipes/:id"
-                element={
-                  <PrivateRoute>
-                    <RecipeDetail />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/new-recipe"
-                element={
-                  <PrivateRoute>
-                    <NewRecipe />
-                  </PrivateRoute>
-                }
-              />
-            </Routes>
-          </main>
+          <div className="flex min-h-[calc(100vh-4rem)]">
+            <main className="flex-1">
+              <div className="container py-8">
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/" element={<Home />} />
+                  <Route
+                    path="/recipes"
+                    element={
+                      <PrivateRoute>
+                        <Recipes />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/recipes/:id"
+                    element={
+                      <PrivateRoute>
+                        <RecipeDetail />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/new-recipe"
+                    element={
+                      <PrivateRoute>
+                        <NewRecipe />
+                      </PrivateRoute>
+                    }
+                  />
+                </Routes>
+              </div>
+            </main>
+          </div>
+          <Toaster position="bottom-right" />
         </div>
       </Router>
     </AuthProvider>
