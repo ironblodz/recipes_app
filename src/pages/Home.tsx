@@ -13,9 +13,9 @@ import { Toaster } from "react-hot-toast";
 const floatingAnimation = {
   initial: { y: 0 },
   animate: {
-    y: [0, -20, 0],
+    y: [0, -10, 0],
     transition: {
-      duration: 4,
+      duration: 1.5,
       repeat: Infinity,
       ease: "easeInOut",
     },
@@ -25,9 +25,9 @@ const floatingAnimation = {
 const floatingAnimation2 = {
   initial: { y: 0 },
   animate: {
-    y: [0, 20, 0],
+    y: [0, 10, 0],
     transition: {
-      duration: 5,
+      duration: 1.5,
       repeat: Infinity,
       ease: "easeInOut",
     },
@@ -39,13 +39,13 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0.1,
     },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 10 },
   show: { opacity: 1, y: 0 },
 };
 
@@ -93,33 +93,33 @@ export default function Home() {
       <div className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.3 }}
             className="space-y-8"
           >
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.3, delay: 0.05 }}
               className="text-6xl md:text-8xl font-bold text-white mb-6"
             >
               Receitas da Joana
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
               className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto"
             >
               A tua aplicação privada de receitas favoritas ❤️
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
+              transition={{ duration: 0.3, delay: 0.15 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               {!currentUser ? (
