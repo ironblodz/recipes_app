@@ -20,6 +20,7 @@ interface Recipe {
     name: string;
     quantity: string;
     unit: string;
+    subStep: string;
   }>;
   instructions: Array<{
     step: string;
@@ -200,19 +201,38 @@ export default function RecipeDetail() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                 Ingredientes
               </h2>
-              <ul className="space-y-2">
-                {recipe.ingredients.map((ingredient, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-pink-100 text-pink-600 mr-3 mt-1">
-                      {index + 1}
-                    </span>
-                    <span className="text-gray-700">
-                      {ingredient.quantity} {ingredient.unit} de{" "}
-                      {ingredient.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <div className="space-y-6">
+                {["Bolo", "Cobertura", "Caldas", "Montagem", "Outros"].map(
+                  (subStep) => {
+                    const subStepIngredients = recipe.ingredients.filter(
+                      (ingredient) => ingredient.subStep === subStep
+                    );
+
+                    if (subStepIngredients.length === 0) return null;
+
+                    return (
+                      <div key={subStep} className="space-y-4">
+                        <h3 className="text-lg font-medium text-gray-800">
+                          {subStep}
+                        </h3>
+                        <ul className="space-y-2">
+                          {subStepIngredients.map((ingredient, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-pink-100 text-pink-600 mr-3 mt-1">
+                                {index + 1}
+                              </span>
+                              <span className="text-gray-700">
+                                {ingredient.quantity} {ingredient.unit} de{" "}
+                                {ingredient.name}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
             </motion.div>
 
             <motion.div
